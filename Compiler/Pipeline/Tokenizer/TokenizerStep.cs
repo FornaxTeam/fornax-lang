@@ -1,28 +1,26 @@
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Keywords;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Brackets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Fornax.Compiler.Pipeline.Tokenizer;
 
-public class TokenizerStep : IPipeStep<char, Token>
+public class TokenizerStep : IPipeStep<char?, Token>
 {
-    private static readonly string[] keywords = { "import", "export", "if", "else", "loop", "while", "for", "in", "var", "final", "const", "break", "test", "continue", "struct", "extension", "return", "is", "as" };
-    private static readonly string[] brackets = { "(", ")", "{", "}", "[", "]" };
-
-    private static readonly Dictionary<TokenType, Type> x = new()
+    public Token? Execute(Pipe<char?> pipe)
     {
-        [TokenType.CHAR] = typeof(char)
-    };
-
-    public Token? Execute(Pipe<char> pipe)
-    {
-        List<Func<Pipe<char>, Token?>> readers = new()
+        List<Func<Pipe<char?>, Token?>> readers = new()
         {
-            ReadAssignments,
             ReadBrackets,
+            ReadEndOfCommand,
             ReadKeyword,
-            ReadIdentifier
+            ReadIdentifier,
         };
+
+        RemoveWhitespaces(pipe);
 
         var fallback = pipe.Position;
 
@@ -32,65 +30,140 @@ public class TokenizerStep : IPipeStep<char, Token>
 
             if (token != null)
             {
+                if (token.Length == 0)
+                {
+                    continue;
+                }
+
                 return token;
             }
 
             pipe.Position = fallback;
         }
 
+        RemoveWhitespaces(pipe);
+
         return null;
     }
 
+    private static void RemoveWhitespaces(Pipe<char?> pipe)
+    {
+        while (true)
+        {
+            var current = pipe.ReadNext();
+
+            if (current == null)
+            {
+                return;
+            }
+
+            if (!char.IsWhiteSpace(current.Value))
+            {
+                pipe.Position--;
+                break;
+            }
+        }
+    }
+
+    /*
     private Token? ReadAssignments(Pipe<char> pipe)
     {
         var content = pipe.ReadNext();
         
-        if(content == '=')
+        if (content == '=')
         {
-            return new Token(TokenType.ASSIGNMENT, content);
-        }
-        return null;
-    }
-
-    private Token? ReadBrackets(Pipe<char> pipe)
-    {
-        var content = pipe.ReadNext();
-
-        if (brackets.Contains(pipe))
-        {
-            return new Token<bool>(TokenType.BRACKET, BrackType.Open);
+            return new IToken(TokenType.ASSIGNMENT, content);
         }
 
         return null;
     }
+    */
 
-    private Token? ReadKeyword(Pipe<char> pipe)
+    private static BracketToken? ReadBrackets(Pipe<char?> pipe)
     {
-        var identifier = ReadIdentifier(pipe);
+        var start = pipe.Position;
 
-        if (identifier == null)
+        if (!pipe.HasNext)
         {
             return null;
         }
 
-        if (keywords.Contains(identifier.Value))
+        var @char = pipe.ReadNext()!.Value;
+
+        var opened = new[] { '(', '{', '[' }.Contains(@char);
+        Bracket bracket;
+
+        switch (@char)
         {
-            return new Token(TokenType.KEYWORD, identifier.Value);
+            case '(':
+            case ')':
+                bracket = Bracket.Parameter;
+                break;
+            case '[':
+            case ']':
+                bracket = Bracket.Array;
+                break;
+            case '{':
+            case '}':
+                bracket = Bracket.Block;
+                break;
+            default:
+                return null;
+        }
+
+        return new BracketToken(start, start + 1, bracket, opened);
+    }
+
+    private EndOfCommandToken? ReadEndOfCommand(Pipe<char?> pipe)
+    {
+        var start = pipe.Position;
+        var @char = pipe.ReadNext();
+
+        if (@char == ';')
+        {
+            return new EndOfCommandToken(start, start + 1);
         }
 
         return null;
     }
 
-    private Token? ReadIdentifier(Pipe<char> pipe)
+    private KeywordToken? ReadKeyword(Pipe<char?> pipe)
     {
-        var content = pipe.ReadNext();
+        var identifier = ReadIdentifier(pipe);
 
-        while (current != ' ' || current != null)
+        if (identifier == null || identifier.Length == 0)
         {
-            content += current;
-            current = pipe.ReadNext();
+            return null;
         }
 
-        return new Token?(TokenType.IDENTIFIER, content);
+        var keyword = KeywordToken.GetKeyword(identifier.Name);
+
+        if (keyword.HasValue)
+        {
+            return new KeywordToken(identifier.Start, identifier.End, keyword.Value);
+        }
+
+        return null;
+    }
+
+    private static IdentifierToken? ReadIdentifier(Pipe<char?> pipe)
+    {
+        StringBuilder stringBuilder = new();
+        var start = pipe.Position;
+
+        while (pipe.HasNext)
+        {
+            var @char = pipe.ReadNext()!.Value;
+
+            if (!char.IsLetter(@char))
+            {
+                pipe.Position--;
+                return new IdentifierToken(start, pipe.Position, stringBuilder.ToString());
+            }
+
+            stringBuilder.Append(@char);
+        }
+
+        return new IdentifierToken(start, pipe.Position, stringBuilder.ToString());
     }
 }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,13 +6,24 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	<RootNamespace>Fornax.Compiler</RootNamespace>
-	<Optimize>true</Optimize>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Pipeline\Tokenizer\Tokens\EOLToken.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Pipeline\Tokenizer\Tokens\NewFile1.txt" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Update="Script.fdx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pipeline\Tokenizer\Tokens\Invalids\" />
   </ItemGroup>
 
 </Project>

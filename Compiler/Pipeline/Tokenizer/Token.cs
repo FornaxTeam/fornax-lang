@@ -1,14 +1,6 @@
 ﻿namespace Fornax.Compiler.Pipeline.Tokenizer;
 
-public struct Token
+public record Token(long Start, long End)
 {
-    public TokenType Type { get; set; }
-
-    public string Value { get; set; }
-
-    public Token(TokenType type, string value)
-    {
-        Type = type;
-        Value = value;
-    }
+    public long Length => End - Start;
 }
