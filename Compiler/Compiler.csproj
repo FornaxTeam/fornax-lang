@@ -9,4 +9,10 @@
 	<Optimize>true</Optimize>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Update="Script.fdx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
