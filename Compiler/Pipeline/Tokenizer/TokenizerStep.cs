@@ -20,7 +20,7 @@ public class TokenizerStep : IPipeStep<char?, Token>
             ReadIdentifier,
         };
 
-        RemoveWhitespaces(pipe);
+        RemoveEmptyAreas(pipe);
 
         var fallback = pipe.Position;
 
@@ -41,23 +41,30 @@ public class TokenizerStep : IPipeStep<char?, Token>
             pipe.Position = fallback;
         }
 
-        RemoveWhitespaces(pipe);
+        RemoveEmptyAreas(pipe);
 
         return null;
+    }
+
+    private static void RemoveEmptyAreas(Pipe<char?> pipe)
+    {
+        RemoveWhitespaces(pipe);
+        RemoveComments(pipe);
+        RemoveWhitespaces(pipe);
     }
 
     private static void RemoveWhitespaces(Pipe<char?> pipe)
     {
         while (true)
         {
-            var current = pipe.ReadNext();
+            var @char = pipe.ReadNext();
 
-            if (current == null)
+            if (@char == null)
             {
                 return;
             }
 
-            if (!char.IsWhiteSpace(current.Value))
+            if (!char.IsWhiteSpace(@char.Value))
             {
                 pipe.Position--;
                 break;
@@ -65,11 +72,42 @@ public class TokenizerStep : IPipeStep<char?, Token>
         }
     }
 
+    private static void RemoveComments(Pipe<char?> pipe)
+    {
+        // Remove comments
+        var @char = pipe.ReadNext();
+
+        if (@char == '/')
+        {
+            @char = pipe.ReadNext();
+
+            if (@char != '/')
+            {
+                pipe.Position -= 2;
+                return;
+            }
+
+            while (true)
+            {
+                @char = pipe.ReadNext();
+
+                if (@char is '\n' or '\r')
+                {
+                    break;
+                }
+            }
+        }
+        else
+        {
+            pipe.Position--;
+        }
+    }
+
     /*
     private Token? ReadAssignments(Pipe<char> pipe)
     {
         var content = pipe.ReadNext();
-        
+
         if (content == '=')
         {
             return new IToken(TokenType.ASSIGNMENT, content);
@@ -138,12 +176,9 @@ public class TokenizerStep : IPipeStep<char?, Token>
 
         var keyword = KeywordToken.GetKeyword(identifier.Name);
 
-        if (keyword.HasValue)
-        {
-            return new KeywordToken(identifier.Start, identifier.End, keyword.Value);
-        }
-
-        return null;
+        return keyword.HasValue
+            ? new KeywordToken(identifier.Start, identifier.End, keyword.Value)
+            : null;
     }
 
     private static IdentifierToken? ReadIdentifier(Pipe<char?> pipe)

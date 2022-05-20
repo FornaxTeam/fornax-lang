@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Fornax.Compiler.Pipeline;
@@ -49,6 +50,16 @@ public abstract class Pipe<T>
             }
 
             yield return current;
+        }
+    }
+
+    public void Fallback(Func<bool> action)
+    {
+        var fallback = Position;
+
+        if (!action())
+        {
+            Position = fallback;
         }
     }
 }
