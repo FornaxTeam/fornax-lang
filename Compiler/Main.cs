@@ -43,6 +43,11 @@ foreach (var token in tokens)
     {
         Console.WriteLine("> " + invalidStringToken.Type);
     }
+    
+    if (token is NumberToken numberToken)
+    {
+        Console.WriteLine("> " + numberToken.Value);
+    }
 }
 
 Console.ReadKey();

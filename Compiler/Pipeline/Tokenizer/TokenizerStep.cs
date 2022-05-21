@@ -18,6 +18,7 @@ public class TokenizerStep : IPipeStep<char?, Token>
             AssignmentToken.Read,
             BracketToken.Read,
             StringToken.Read,
+            NumberToken.Read,
             EndOfCommandToken.Read,
             KeywordToken.Read,
             IdentifierToken.Read
