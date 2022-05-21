@@ -12,9 +12,9 @@ public class Test
 {
     public static void TestMethod()
     {
-        //var parser = Parser<Token>.Create()
-        //    .Expect<KeywordToken>()
-        //        .Where(token => token.Keyword == Keyword.Export)
-        //        .Optional();
+        var parser = Parser<Token>.Create()
+            .Expect<KeywordToken>()
+                .Where(token => token.Keyword == Keyword.Export)
+                .Optional();
     }
 }
