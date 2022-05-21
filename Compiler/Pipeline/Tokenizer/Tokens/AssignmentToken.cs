@@ -4,8 +4,6 @@ public record AssignmentToken(long Start, long End) : Token(Start, End)
 {
     public static AssignmentToken? Read(Pipe<char?> pipe)
     {
-        var content = pipe.ReadNext();
-
-        return content == '=' ? new AssignmentToken(pipe.Position - 1, pipe.Position) : null;
+        return pipe.ReadNext() == '=' ? new AssignmentToken(pipe.Position - 1, pipe.Position) : null;
     }
 }
