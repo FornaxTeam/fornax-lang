@@ -17,37 +17,7 @@ foreach (var token in tokens)
         break;
     }
 
-    Console.WriteLine(token.GetType().Name);
-
-    if (token is IdentifierToken identifierToken)
-    {
-        Console.WriteLine($"> \"{identifierToken.Name}\"");
-    }
-
-    if (token is KeywordToken keywordToken)
-    {
-        Console.WriteLine("> " + keywordToken.Keyword);
-    }
-
-    if (token is BracketToken bracketToken)
-    {
-        Console.WriteLine("> " + bracketToken.Bracket + " (" + (bracketToken.Opened ? "opened" : "closed") + ")");
-    }
-    
-    if (token is StringToken stringToken)
-    {
-        Console.WriteLine("> " + stringToken.Value);
-    }
-    
-    if (token is InvalidStringToken invalidStringToken)
-    {
-        Console.WriteLine("> " + invalidStringToken.Type);
-    }
-    
-    if (token is NumberToken numberToken)
-    {
-        Console.WriteLine("> " + numberToken.Value);
-    }
+    Console.WriteLine(token);
 }
 
 Console.ReadKey();

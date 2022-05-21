@@ -1,3 +1,7 @@
 ﻿main() {
-	
+	var test = "abc";
+
+	if (test == "abc") {
+		println(test);
+	}
 }

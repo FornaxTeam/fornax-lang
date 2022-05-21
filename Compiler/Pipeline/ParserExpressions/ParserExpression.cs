@@ -27,6 +27,4 @@ public record ParserExpression<T, TParserType>(Parser<TParserType> Parser, Func<
             .Append(condition)
             .ToArray()
     };
-
-    public void 
 }
