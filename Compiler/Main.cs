@@ -33,6 +33,21 @@ foreach (var token in tokens)
     {
         Console.WriteLine("> " + bracketToken.Bracket + " (" + (bracketToken.Opened ? "opened" : "closed") + ")");
     }
+    
+    if (token is StringToken stringToken)
+    {
+        Console.WriteLine("> " + stringToken.Value);
+    }
+    
+    if (token is InvalidStringToken invalidStringToken)
+    {
+        Console.WriteLine("> " + invalidStringToken.Type);
+    }
+    
+    if (token is NumberToken numberToken)
+    {
+        Console.WriteLine("> " + numberToken.Value);
+    }
 }
 
 Console.ReadKey();

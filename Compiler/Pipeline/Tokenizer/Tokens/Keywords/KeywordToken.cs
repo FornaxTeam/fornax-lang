@@ -17,4 +17,23 @@ public record KeywordToken(long Start, long End, Keyword Keyword) : Token(Start,
 
         return null;
     }
+    
+    
+    
+    public static KeywordToken? Read(Pipe<char?> pipe)
+    {
+        var identifier = IdentifierToken.Read(pipe);
+
+        if (identifier == null || identifier.Length == 0)
+        {
+            return null;
+        }
+
+        var keyword = KeywordToken.GetKeyword(identifier.Name);
+
+        return keyword.HasValue
+            ? new KeywordToken(identifier.Start, identifier.End, keyword.Value)
+            : null;
+    }
+
 }
