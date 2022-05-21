@@ -9,7 +9,7 @@ Console.WriteLine();
 Console.WriteLine("Source:");
 Console.WriteLine();
 
-Console.WriteLine("   " + source.ToString().Replace("\r\n", "\n").Replace("\n", "\n    "));
+Console.WriteLine("    " + source.ToString().Replace("\r\n", "\n").Replace("\n", "\n    "));
 
 Console.ReadKey();
 
