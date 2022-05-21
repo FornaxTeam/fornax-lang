@@ -3,8 +3,7 @@ using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Keywords;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Brackets;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Comparison;
 
 namespace Fornax.Compiler.Pipeline.Tokenizer;
 
@@ -14,6 +13,7 @@ public class TokenizerStep : IPipeStep<char?, Token>
     {
         List<Func<Pipe<char?>, Token?>> readers = new()
         {
+            ComparisonToken.Read,
             ArrowToken.Read,
             AssignmentToken.Read,
             BracketToken.Read,
