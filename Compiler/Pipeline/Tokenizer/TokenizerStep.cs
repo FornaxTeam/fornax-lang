@@ -265,6 +265,8 @@ public class TokenizerStep : IPipeStep<char?, Token>
                         return new InvalidStringToken(start, pipe.Position, InvalidStringTokenType.InvalidEscape);
                 }
 
+                escaped = false;
+
                 continue;
             }
             switch (@char)
