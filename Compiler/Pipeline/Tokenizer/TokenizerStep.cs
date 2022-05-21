@@ -4,6 +4,9 @@ using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Brackets;
 using System;
 using System.Collections.Generic;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Comparison;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Mark;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.MathOperation;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Separator;
 
 namespace Fornax.Compiler.Pipeline.Tokenizer;
 
@@ -19,7 +22,11 @@ public class TokenizerStep : IPipeStep<char?, Token>
             BracketToken.Read,
             StringToken.Read,
             NumberToken.Read,
+            MarkToken.Read,
+            MathOperationToken.Read,
+            SeparatorToken.Read,
             EndOfCommandToken.Read,
+            SeparatorToken.Read,
             KeywordToken.Read,
             IdentifierToken.Read
         };

@@ -2,7 +2,7 @@
 
 namespace Fornax.Compiler.Pipeline.Tokenizer.Tokens.Comparison;
 
-public record ComparisonToken(long Start, long End, Comparison Bracket) : Token(Start, End)
+public record ComparisonToken(long Start, long End, Comparison Comparison) : Token(Start, End)
 {
    public static ComparisonToken? Read(Pipe<char?> pipe)
     {
