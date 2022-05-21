@@ -20,6 +20,7 @@ public class TokenizerStep : IPipeStep<char?, Token>
             ReadEndOfCommand,
             ReadKeyword,
             ReadIdentifier,
+            ReadString
         };
 
         RemoveEmptyAreas(pipe);
@@ -88,7 +89,10 @@ public class TokenizerStep : IPipeStep<char?, Token>
 
             if (@char is not ('/' or '*'))
             {
-                pipe.Position -= 2;
+                if (pipe.HasNext)
+                    pipe.Position -= 2;
+                else
+                    pipe.Position--;
                 return false;
             }
 
@@ -108,7 +112,8 @@ public class TokenizerStep : IPipeStep<char?, Token>
         }
         else
         {
-            pipe.Position--;
+            if(@char != null)
+                pipe.Position--;
             return false;
         }
 
@@ -207,12 +212,76 @@ public class TokenizerStep : IPipeStep<char?, Token>
             if (!char.IsLetter(@char))
             {
                 pipe.Position--;
-                return new IdentifierToken(start, pipe.Position, stringBuilder.ToString());
+                return stringBuilder.Length == 0 ? null : new IdentifierToken(start, pipe.Position, stringBuilder.ToString());
             }
 
             stringBuilder.Append(@char);
         }
+        
+        if(stringBuilder.Length > 0)
+        {
+            return new IdentifierToken(start, pipe.Position, stringBuilder.ToString());
+        }
 
-        return new IdentifierToken(start, pipe.Position, stringBuilder.ToString());
+        return null;
+    }
+    
+    private static Token? ReadString(Pipe<char?> pipe)
+    {
+        var start = pipe.Position;
+        var @char = pipe.ReadNext();
+
+        if (@char != '"')
+        {
+            return null;
+        }
+
+        StringBuilder stringBuilder = new();
+        var escaped = false;
+
+        while (pipe.HasNext)
+        {
+            @char = pipe.ReadNext()!.Value;
+            if (escaped)
+            {
+                switch (@char)
+                {
+                    case 'n':
+                        stringBuilder.Append('\n');
+                        break;
+                    case 't':
+                        stringBuilder.Append('\t');
+                        break;
+                    case 'r':
+                        stringBuilder.Append('\r');
+                        break;
+                    case '"':
+                        stringBuilder.Append('"');
+                        break;
+                    case '\\':
+                        stringBuilder.Append('\\');
+                        break;
+                    default:
+                        return new InvalidStringToken(start, pipe.Position, InvalidStringTokenType.InvalidEscape);
+                }
+
+                continue;
+            }
+            switch (@char)
+            {
+                case '\\':
+                    escaped = true;
+                    break;
+                case '"':
+                    return new StringToken(start, pipe.Position, stringBuilder.ToString());
+                case '\n':
+                    return new InvalidStringToken(start, pipe.Position, InvalidStringTokenType.NewLine);
+                default:
+                    stringBuilder.Append(@char);
+                    break;
+            }
+        }
+ 
+        return new InvalidStringToken(start, pipe.Position, InvalidStringTokenType.NoEnd);
     }
 }
