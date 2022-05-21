@@ -32,7 +32,7 @@ public record NumberToken(long Start, long End, string Value, bool HasPoint) : T
             {
                 pipe.Position--;
             }
-            return sb.Length == 0 ? null : new NumberToken(start, pipe.Position, sb.ToString(), hasPoint);
+            return sb.Length == 0 || sb.Equals(".") ? null : new NumberToken(start, pipe.Position, sb.ToString(), hasPoint);
         }
     }
 }
