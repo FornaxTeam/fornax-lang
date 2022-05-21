@@ -10,9 +10,14 @@ namespace Fornax.Compiler.Pipeline.ParserExpressions;
 
 public class Test
 {
+    public static void WriteLogEntry(long Start, long End, ErrorLevel errorLevel, string message)
+    {
+        Console.WriteLine(message);
+    }
+
     public static void TestMethod()
     {
-        var parser = Parser<Token>.Create()
+        var parser = Parser<Token>.Create(WriteLogEntry)
             .Expect<KeywordToken>()
                 .Where(token => token.Keyword == Keyword.Export)
                 .Optional();
