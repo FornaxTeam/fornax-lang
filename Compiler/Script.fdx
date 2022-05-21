@@ -1,7 +1,9 @@
-﻿main() {
+﻿import std.io:out;
+
+main() {
 	var test = "abc";
 
 	if (test == "abc") {
-		println(test);
+		out.println(test);
 	}
 }
