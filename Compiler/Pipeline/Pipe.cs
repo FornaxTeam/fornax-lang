@@ -51,6 +51,8 @@ public abstract class Pipe<T>
 
             yield return current;
         }
+
+        Position = 0;
     }
 
     public void Fallback(Func<bool> action)

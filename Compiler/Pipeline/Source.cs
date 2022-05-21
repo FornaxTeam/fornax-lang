@@ -25,4 +25,6 @@ public class Source : Pipe<char?>
     private Source(string path) => data = File.ReadAllText(path);
 
     public static Source Create(string path) => new(path);
+
+    public override string ToString() => data;
 }
