@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Comparison;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Keywords;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Brackets;
+using System;
+using System.Collections.Generic;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Comparison;
 
 namespace Fornax.Compiler.Pipeline.Tokenizer;
 
@@ -56,6 +53,7 @@ public class TokenizerStep : IPipeStep<char?, Token>
     private static void RemoveEmptyAreas(Pipe<char?> pipe)
     {
         var comments = true;
+
         while (comments)
         {
             RemoveWhitespaces(pipe);
@@ -94,9 +92,14 @@ public class TokenizerStep : IPipeStep<char?, Token>
             if (@char is not ('/' or '*'))
             {
                 if (pipe.HasNext)
+                {
                     pipe.Position -= 2;
+                }
                 else
+                {
                     pipe.Position--;
+                }
+
                 return false;
             }
 
@@ -107,20 +110,23 @@ public class TokenizerStep : IPipeStep<char?, Token>
             while (true)
             {
                 @char = pipe.ReadNext();
-                if (@char is '\n' or '\r' && !multiLine || multiLine && firstStar && @char == '/')
+
+                if ((@char is '\n' or '\r' && !multiLine)
+                    || (multiLine && firstStar && @char == '/'))
                 {
                     break;
                 }
+
                 firstStar = @char == '*';
             }
         }
         else
         {
-            if(@char != null)
-
-            if (!char.IsLetter(@char))
+            if (@char != null)
             {
                 pipe.Position--;
+            }
+
             return false;
         }
 
