@@ -14,6 +14,8 @@ public class TokenizerStep : IPipeStep<char?, Token>
     {
         List<Func<Pipe<char?>, Token?>> readers = new()
         {
+            ReadArrow,
+            ReadAssignments,
             ReadBrackets,
             ReadEndOfCommand,
             ReadKeyword,
@@ -48,9 +50,13 @@ public class TokenizerStep : IPipeStep<char?, Token>
 
     private static void RemoveEmptyAreas(Pipe<char?> pipe)
     {
-        RemoveWhitespaces(pipe);
-        RemoveComments(pipe);
-        RemoveWhitespaces(pipe);
+        var comments = true;
+        while (comments)
+        {
+            RemoveWhitespaces(pipe);
+            comments = RemoveComment(pipe);
+            RemoveWhitespaces(pipe);
+        }
     }
 
     private static void RemoveWhitespaces(Pipe<char?> pipe)
@@ -72,50 +78,58 @@ public class TokenizerStep : IPipeStep<char?, Token>
         }
     }
 
-    private static void RemoveComments(Pipe<char?> pipe)
+    private static bool RemoveComment(Pipe<char?> pipe)
     {
-        // Remove comments
         var @char = pipe.ReadNext();
 
         if (@char == '/')
         {
             @char = pipe.ReadNext();
 
-            if (@char != '/')
+            if (@char is not ('/' or '*'))
             {
                 pipe.Position -= 2;
-                return;
+                return false;
             }
+
+            var multiLine = @char == '*';
+
+            var firstStar = false;
 
             while (true)
             {
                 @char = pipe.ReadNext();
-
-                if (@char is '\n' or '\r')
+                if (@char is '\n' or '\r' && !multiLine || multiLine && firstStar && @char == '/')
                 {
                     break;
                 }
+                firstStar = @char == '*';
             }
         }
         else
         {
             pipe.Position--;
+            return false;
         }
+
+        return true;
     }
 
-    /*
-    private Token? ReadAssignments(Pipe<char> pipe)
+    private static AssignmentToken? ReadAssignments(Pipe<char?> pipe)
     {
         var content = pipe.ReadNext();
 
-        if (content == '=')
-        {
-            return new IToken(TokenType.ASSIGNMENT, content);
-        }
-
-        return null;
+        return content == '=' ? new AssignmentToken(pipe.Position - 1, pipe.Position) : null;
     }
-    */
+    
+    private static ArrowToken? ReadArrow(Pipe<char?> pipe)
+    {
+        var content = pipe.ReadNext();
+
+        if (content != '=') return null;
+        content = pipe.ReadNext();
+        return content == '>' ? new ArrowToken(pipe.Position - 2, pipe.Position) : null;
+    }
 
     private static BracketToken? ReadBrackets(Pipe<char?> pipe)
     {
