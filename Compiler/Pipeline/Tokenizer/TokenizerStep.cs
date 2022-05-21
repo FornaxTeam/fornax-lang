@@ -157,12 +157,9 @@ public class TokenizerStep : IPipeStep<char?, Token>
         var start = pipe.Position;
         var @char = pipe.ReadNext();
 
-        if (@char == ';')
-        {
-            return new EndOfCommandToken(start, start + 1);
-        }
-
-        return null;
+        return @char == ';'
+            ? new EndOfCommandToken(start, start + 1)
+            : null;
     }
 
     private KeywordToken? ReadKeyword(Pipe<char?> pipe)

@@ -1,5 +1,7 @@
 ﻿using Fornax.Compiler.Pipeline.Expressionizer.Expressions;
 using Fornax.Compiler.Pipeline.Tokenizer;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Brackets;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Keywords;
 using System;
 using System.Collections.Generic;
@@ -32,30 +34,31 @@ public class ExpressionizerStep : IPipeStep<Token, Expression>
         return null;
     }
 
-    private static bool ReadExport(Pipe<Token> pipe)
-    {
-        var export = false;
-
-        pipe.Fallback(() =>
-        {
-            var token = pipe.ReadNext();
-
-            if (token is KeywordToken keywordToken && keywordToken.Keyword == Keyword.Export)
-            {
-                export = true;
-                return true;
-            }
-
-            return false;
-        });
-
-        return export;
-    }
-
-    private Expression? ReadMethod(Pipe<Token> pipe)
+    private MethodExpression? ReadMethod(Pipe<Token> pipe)
     {
         var start = pipe.Position;
-        var export = ReadExport(pipe);
+        var export = false;
+
+        var keyword = pipe.Expect<KeywordToken>()?.Keyword;
+
+        if (keyword is not null)
+        {
+            if (keyword == Keyword.Export)
+            {
+                export = true;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        var name = pipe.Expect<IdentifierToken>()?.Name;
+
+        if (name is null)
+        {
+            return null;
+        }
 
         return new MethodExpression(start, pipe.Position, export);
     }

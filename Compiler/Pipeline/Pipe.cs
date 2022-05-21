@@ -62,4 +62,22 @@ public abstract class Pipe<T>
             Position = fallback;
         }
     }
+
+    public T2? Expect<T2>() where T2 : T
+    {
+        T2? result = default;
+
+        Fallback(() =>
+        {
+            if (ReadNext() is T2 element)
+            {
+                result = element;
+                return true;
+            }
+
+            return false;
+        });
+
+        return result;
+    }
 }
