@@ -1,0 +1,42 @@
+﻿// Method, that wants to get some method
+anyMethod(i32(i32 a, b) parameterMethod, int a, b) {
+    return parameterMethod(a, b);
+}
+
+main() {
+    // Expression as parameter
+    anyMethod(a * b, 3, 10); // == 30
+
+    // Block as parameter
+    anyMethod({
+        return a + b;
+    }, 10, 10); // == 20
+
+    // If we don´t know the target type because of "var",
+    // we must write it explicit down before the block,
+    // if we want to create a method as an object.
+    //
+    // This is required because otherwise it looks like
+    // a block that just returns a value directly.
+    var methodAsVariable = i32(i32 a, b) {
+        return a - b;
+    };
+
+    // If we know the target type, we can write the method implicit.
+    i32(i32 a, b) methodAsVariable2 = {
+        return a / b;
+    };
+
+    // If the target type is not a method, it will be executed directly.
+    // So it works like Rust.
+    var valueFromBlock = {
+        return 1 + 2 + 3;
+    };
+
+    // If we want to change the parameter names of an method object, we can cast it.
+    var firstCopyOfMethodAsVariable2 = methodAsVariable2 as i32(i32 newName1, newName2);
+    // or
+    var secondCopyOfMethodAsVariable2 = (i32(i32 newName1, newName2))methodAsVariable2;
+
+    // I don´t know, which cast would be better.
+}
