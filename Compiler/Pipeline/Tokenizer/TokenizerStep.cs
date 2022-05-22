@@ -7,6 +7,8 @@ using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Comparison;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Mark;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.MathOperation;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Separator;
+using System.Linq;
+using System.Reflection;
 
 namespace Fornax.Compiler.Pipeline.Tokenizer;
 
@@ -14,23 +16,12 @@ public class TokenizerStep : IPipeStep<char?, Token>
 {
     public Token? Execute(Pipe<char?> pipe)
     {
-        List<Func<Pipe<char?>, Token?>> readers = new()
-        {
-            ComparisonToken.Read,
-            ArrowToken.Read,
-            AssignmentToken.Read,
-            BracketToken.Read,
-            StringToken.Read,
-            NumberToken.Read,
-            MarkToken.Read,
-            MathOperationToken.Read,
-            SeparatorToken.Read,
-            EndOfCommandToken.Read,
-            SeparatorToken.Read,
-            KeywordToken.Read,
-            IdentifierToken.Read,
-            AnnotationToken.Read
-        };
+        var readers = Assembly.GetExecutingAssembly()
+            .GetTypes()
+            .Where(type => type.BaseType == typeof(Token))
+            .Select(type => new Func<Pipe<char?>, Token?>(current => (Token?)type.GetMethod("Read")!.Invoke(null, new object?[] { current })))
+            .ToList();
+
 
         RemoveEmptyAreas(pipe);
 
