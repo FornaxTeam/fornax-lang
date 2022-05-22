@@ -1,8 +1,9 @@
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Keywords;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Brackets;
 using System;
 using System.Collections.Generic;
+
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Brackets;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Keywords;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Comparison;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Mark;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.MathOperation;
