@@ -28,7 +28,8 @@ public class TokenizerStep : IPipeStep<char?, Token>
             EndOfCommandToken.Read,
             SeparatorToken.Read,
             KeywordToken.Read,
-            IdentifierToken.Read
+            IdentifierToken.Read,
+            AnnotationToken.Read
         };
 
         RemoveEmptyAreas(pipe);
