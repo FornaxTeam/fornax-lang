@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Fornax.Compiler.Pipeline.ParserExpressions.Interfaces;
+using System;
 
 namespace Fornax.Compiler.Pipeline.ParserExpressions;
 
 public interface IParserFragment<TParserType>
 {
-    IParserExpression<T, TParserType> Expect<T>() where T : TParserType;
+    IParserExpressionToCount<T, TParserType> Expect<T>() where T : TParserType;
 }

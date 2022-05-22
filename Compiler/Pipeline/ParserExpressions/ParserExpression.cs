@@ -1,26 +1,28 @@
-﻿using System;
+﻿using Fornax.Compiler.Pipeline.ParserExpressions.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Fornax.Compiler.Pipeline.ParserExpressions;
 
-public class ParserExpression<T, TParserType> : IParserExpression<T, TParserType> where T : TParserType
+public class ParserExpression<T, TParserType> : IParserExpressionToCount<T, TParserType> where T : TParserType
 {
     private readonly ParserFragment<TParserType> parser;
     private readonly List<Func<T, bool>> conditions = new();
     private readonly List<Action<T>> handlers = new();
     private string? messageIfMissing = null;
     private bool isOptional = false;
+    private (int from, int to) count = (1, 1);
 
     public ParserExpression(ParserFragment<TParserType> parser) => this.parser = parser;
 
-    public IParserExpression<T, TParserType> Where(Func<T, bool> condition)
+    public IParserExpressionToFilter<T, TParserType> Where(Func<T, bool> condition)
     {
         conditions.Add(condition);
         return this;
     }
 
-    public IFilteredParserExpression<T, TParserType> Handle(Action<T> handler)
+    public IParserExpressionToFinish<T, TParserType> Handle(Action<T> handler)
     {
         handlers.Add(handler);
         return this;
@@ -63,4 +65,12 @@ public class ParserExpression<T, TParserType> : IParserExpression<T, TParserType
 
         return result!;
     }
+
+    public IParserExpressionToFilter<T, TParserType> Many(int from, int to)
+    {
+        count = (from, to);
+        return this;
+    }
+
+    public IParserExpressionToFilter<T, TParserType> Many(int from) => Many(from, int.MaxValue);
 }
