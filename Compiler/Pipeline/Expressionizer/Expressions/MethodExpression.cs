@@ -1,3 +1,10 @@
-﻿namespace Fornax.Compiler.Pipeline.Expressionizer.Expressions;
+﻿using System.Collections.Generic;
 
-public record MethodExpression(long Start, long End, bool Export) : Expression(Start, End);
+namespace Fornax.Compiler.Pipeline.Expressionizer.Expressions;
+
+public class MethodExpression : Expression
+{
+    public MethodExpression(List<ArgumentExpression> arguments) => Arguments = arguments;
+
+    public List<ArgumentExpression> Arguments { get; private set; }
+}
