@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Fornax.Compiler.Pipeline;
 
@@ -45,7 +46,10 @@ public abstract class Pipe<T>
 
             if (current is null)
             {
-                yield return default;
+                yield return HasNext
+                    ? throw new InvalidDataException("Unreaded data available.")
+                    : default;
+
                 break;
             }
 
