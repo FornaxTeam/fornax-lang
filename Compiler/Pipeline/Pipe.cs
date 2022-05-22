@@ -1,6 +1,9 @@
+using Fornax.Compiler.Pipeline.Tokenizer;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace Fornax.Compiler.Pipeline;
 
