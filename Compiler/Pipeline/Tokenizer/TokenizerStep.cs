@@ -15,15 +15,26 @@ namespace Fornax.Compiler.Pipeline.Tokenizer;
 
 public class TokenizerStep : IPipeStep<char?, Token>
 {
+    private static readonly Func<Pipe<char?>, Token?>[] readers = new Func<Pipe<char?>, Token?>[]
+    {
+        ComparisonToken.Read,
+        ArrowToken.Read,
+        AssignmentToken.Read,
+        BracketToken.Read,
+        StringToken.Read,
+        NumberToken.Read,
+        MarkToken.Read,
+        MathOperationToken.Read,
+        SeparatorToken.Read,
+        EndOfCommandToken.Read,
+        SeparatorToken.Read,
+        KeywordToken.Read,
+        IdentifierToken.Read,
+        AnnotationToken.Read
+    };
+
     public Token? Execute(Pipe<char?> pipe)
     {
-        var readers = Assembly.GetExecutingAssembly()
-            .GetTypes()
-            .Where(type => type.BaseType == typeof(Token))
-            .Select(type => new Func<Pipe<char?>, Token?>(current => (Token?)type.GetMethod("Read")!.Invoke(null, new object?[] { current })))
-            .ToList();
-
-
         RemoveEmptyAreas(pipe);
 
         var fallback = pipe.Position;
