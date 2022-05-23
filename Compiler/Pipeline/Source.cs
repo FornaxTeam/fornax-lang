@@ -22,9 +22,11 @@ public class Source : Pipe<char?>
         return current;
     }
 
-    private Source(string path) => data = File.ReadAllText(path);
+    private Source(string data) => this.data = data;
 
-    public static Source Create(string path) => new(path);
+    public static Source FromFile(string path) => new(File.ReadAllText(path));
+
+    public static Source FromData(string data) => new(data);
 
     public override string ToString() => data;
 }
