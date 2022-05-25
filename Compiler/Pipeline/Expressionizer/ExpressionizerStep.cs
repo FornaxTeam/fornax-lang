@@ -55,11 +55,6 @@ public class ExpressionizerStep : IPipeStep<Token, Expression>
 
         var name = pipe.Expect<IdentifierToken>()?.Name;
 
-        if (name is null)
-        {
-            return null;
-        }
-
-        return new MethodExpression(start, pipe.Position, export);
+        return name is null ? null : new MethodExpression(start, pipe.Position, export);
     }
 }

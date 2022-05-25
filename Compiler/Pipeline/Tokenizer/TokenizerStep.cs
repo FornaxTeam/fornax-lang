@@ -23,15 +23,10 @@ public class TokenizerStep : IPipeStep<char?, Token>
             .Select(type => new Func<Pipe<char?>, Token?>(current => (Token?)type.GetMethod("Read")!.Invoke(null, new object?[] { current })))
             .ToList();
 
-
-        RemoveEmptyAreas(pipe);
-
         var fallback = pipe.Position;
 
-        foreach (var reader in readers)
+        foreach (var token in readers.Select(reader => reader(pipe)))
         {
-            var token = reader(pipe);
-
             if (token != null)
             {
                 if (token.Length == 0)
@@ -45,91 +40,6 @@ public class TokenizerStep : IPipeStep<char?, Token>
             pipe.Position = fallback;
         }
 
-        RemoveEmptyAreas(pipe);
-
         return null;
-    }
-
-    private static void RemoveEmptyAreas(Pipe<char?> pipe)
-    {
-        var comments = true;
-
-        while (comments)
-        {
-            RemoveWhitespaces(pipe);
-            comments = RemoveComment(pipe);
-            RemoveWhitespaces(pipe);
-        }
-    }
-
-    private static void RemoveWhitespaces(Pipe<char?> pipe)
-    {
-        while (true)
-        {
-            var @char = pipe.ReadNext();
-
-            if (@char == null)
-            {
-                return;
-            }
-
-            if (!char.IsWhiteSpace(@char.Value))
-            {
-                pipe.Position--;
-                break;
-            }
-        }
-    }
-
-    private static bool RemoveComment(Pipe<char?> pipe)
-    {
-        var @char = pipe.ReadNext();
-
-        if (@char == '/')
-        {
-            @char = pipe.ReadNext();
-
-            if (@char is not ('/' or '*'))
-            {
-                if (pipe.HasNext)
-                {
-                    pipe.Position -= 2;
-                }
-                else
-                {
-                    pipe.Position--;
-                }
-
-                return false;
-            }
-
-            var multiLine = @char == '*';
-
-            var firstStar = false;
-
-            while (true)
-            {
-                @char = pipe.ReadNext();
-
-                if ((@char is '\n' or '\r' && !multiLine)
-                    || (multiLine && firstStar && @char == '/'))
-                {
-                    break;
-                }
-
-                firstStar = @char == '*';
-            }
-        }
-        else
-        {
-            if (@char != null)
-            {
-                pipe.Position--;
-            }
-
-            return false;
-        }
-
-        return true;
     }
 }
