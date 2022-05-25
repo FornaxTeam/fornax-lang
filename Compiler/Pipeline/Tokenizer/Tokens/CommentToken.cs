@@ -5,7 +5,7 @@ namespace Fornax.Compiler.Pipeline.Tokenizer.Tokens;
 
 
 
-public record CommentToken(long Start, long End, bool multiLine) : Token(Start, End)
+public record CommentToken(long Start, long End, bool MultiLine) : Token(Start, End)
 {
     public static CommentToken? Read(Pipe<char?> pipe)
     {
