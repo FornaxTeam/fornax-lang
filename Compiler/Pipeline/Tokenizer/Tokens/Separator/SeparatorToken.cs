@@ -17,6 +17,7 @@ public record SeparatorToken(long Start, long End, Separator Separator) : Token(
         {
             '.' => Separator.Point,
             ':' => Separator.Collection,
+            ',' => Separator.List,
             _ => null
         };
 
