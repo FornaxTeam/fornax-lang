@@ -2,7 +2,7 @@ namespace Fornax.Compiler.Pipeline.Expressionizer.Expressions;
 
 public class ImportExpression : Expression
 {
-    public ImportExpression(string library, string path)
+    public ImportExpression(long start, long end, string library, string path) : base(start, end)
     {
         Library = library;
         Path = path;

@@ -2,7 +2,7 @@ namespace Fornax.Compiler.Pipeline.Expressionizer.Expressions;
 
 public class ExecuteExpression : Expression
 {
-    public ExecuteExpression(string name, string[] args)
+    public ExecuteExpression(long start = default, long end = default, string name = null, string[] args = null) : base(start, end)
     {
         Name = name;
         Args = args;

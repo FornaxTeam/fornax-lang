@@ -2,7 +2,7 @@ namespace Fornax.Compiler.Pipeline.Expressionizer.Expressions;
 
 public class ArgumentExpression : Expression
 {
-    public ArgumentExpression(string type, string name)
+    public ArgumentExpression(long start, long end, string type, string name) : base(start, end)
     {
         Type = type;
         Name = name;

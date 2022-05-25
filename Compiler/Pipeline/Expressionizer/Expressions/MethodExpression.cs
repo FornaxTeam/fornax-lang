@@ -7,8 +7,9 @@ public class MethodExpression : Expression
     public long Start { get; private set; }
     public long End { get; private set; }
     public bool Export { get; private set; }
-    
-    public MethodExpression(long start, long end, bool export) {
+
+    public MethodExpression(long start, long end, bool export) : base(start, end)
+    {
         Start = start;
         End = end;
         Export = export;
