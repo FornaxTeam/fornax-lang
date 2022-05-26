@@ -6,18 +6,15 @@ namespace Fornax.Compiler;
 
 public static class ColoredConsole
 {
-    public static void WriteLine(string message)
+    public static void WriteLine(object? obj = null)
     {
-        Write(message);
+        Write(obj);
         Console.WriteLine();
     }
 
-    public static void Write(string message)
+    public static void Write(object? obj)
     {
-        if (message is null)
-        {
-            return;
-        }
+        var message = "§7" + (obj?.ToString() ?? "");
 
         Stack<ConsoleColor> stack = new();
         stack.Push(Console.ForegroundColor = ConsoleColor.Gray);
