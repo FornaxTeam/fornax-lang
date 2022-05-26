@@ -18,6 +18,7 @@ public record ComparisonToken(long Start, long End, Comparison Comparison) : Tok
         if (@char == '!')
         {
             @char = pipe.ReadNext()!.Value;
+
             if (@char == '=')
             {
                 return new ComparisonToken(start, pipe.Position, Comparison.NotEqual);

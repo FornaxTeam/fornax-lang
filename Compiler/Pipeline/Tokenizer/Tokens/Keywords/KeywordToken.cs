@@ -35,5 +35,4 @@ public record KeywordToken(long Start, long End, Keyword Keyword) : Token(Start,
             ? new KeywordToken(identifier.Start, identifier.End, keyword.Value)
             : null;
     }
-
 }
