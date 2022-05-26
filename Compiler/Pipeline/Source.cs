@@ -10,6 +10,8 @@ public class Source : Pipe<char?>
 
     public override bool HasNext => Position < data.Length;
 
+    public override long Length => data.Length;
+
     public override char? ReadNext()
     {
         if (Position >= data.Length)
