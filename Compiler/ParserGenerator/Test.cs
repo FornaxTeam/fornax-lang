@@ -49,10 +49,12 @@ public static class Test
                 });
 
                 if (!isSuccessful)
+                {
                     ParserFragment.Create()
                         .Expect<IdentifierToken>()
                             .MessageIfMissing("Parameter name expected.")
                         .Parse(pipe, log);
+                }
             });
 
         var method = ParserFragment.Create()
