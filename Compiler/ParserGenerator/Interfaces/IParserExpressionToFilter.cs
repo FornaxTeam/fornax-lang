@@ -1,7 +1,7 @@
 ﻿using Fornax.Compiler.Pipeline.Tokenizer;
 using System;
 
-namespace Fornax.Compiler.Pipeline.ParserExpressions.Interfaces;
+namespace Fornax.Compiler.ParserGenerator.Interfaces;
 
 public interface IParserExpressionToFilter<T> : IParserExpressionToFinish<T> where T : Token
 {

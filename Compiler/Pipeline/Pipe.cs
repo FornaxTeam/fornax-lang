@@ -29,7 +29,11 @@ public abstract class Pipe<T>
         public override To ReadNext() => step.Execute(pipe)!;
 
         public override bool HasNext => pipe.HasNext;
+
+        public override long Length => pipe.Length;
     }
+
+    public abstract long Length { get; }
 
     public abstract long Position { get; set; }
 
@@ -62,14 +66,17 @@ public abstract class Pipe<T>
         Position = 0;
     }
 
-    public void Fallback(Func<bool> action)
+    public bool Fallback(Func<bool> action)
     {
         var fallback = Position;
 
         if (!action())
         {
             Position = fallback;
+            return false;
         }
+
+        return true;
     }
 
     public T2? Expect<T2>() where T2 : T

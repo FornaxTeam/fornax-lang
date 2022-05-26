@@ -1,12 +1,11 @@
 ﻿using Fornax.Compiler.Pipeline;
-using Fornax.Compiler.Pipeline.ParserExpressions;
 using Fornax.Compiler.Pipeline.Tokenizer;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Brackets;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Keywords;
 using System;
 
-namespace Fornax.Compiler.ParserExpressions;
+namespace Fornax.Compiler.ParserGenerator;
 
 public static class Test
 {

@@ -1,12 +1,10 @@
 ﻿using Fornax.Compiler.ParserGenerator.Interfaces;
 using Fornax.Compiler.Pipeline;
-using Fornax.Compiler.Pipeline.ParserExpressions;
-using Fornax.Compiler.Pipeline.ParserExpressions.Interfaces;
 using Fornax.Compiler.Pipeline.Tokenizer;
 using System;
 using System.Collections.Generic;
 
-namespace Fornax.Compiler.ParserExpressions;
+namespace Fornax.Compiler.ParserGenerator;
 
 public interface IParserFragment
 {

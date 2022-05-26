@@ -1,6 +1,6 @@
 ﻿using Fornax.Compiler.Pipeline.Tokenizer;
 
-namespace Fornax.Compiler.Pipeline.ParserExpressions.Interfaces;
+namespace Fornax.Compiler.ParserGenerator.Interfaces;
 
 public interface IParserExpressionToCount<T> : IParserExpressionToFilter<T> where T : Token
 {
