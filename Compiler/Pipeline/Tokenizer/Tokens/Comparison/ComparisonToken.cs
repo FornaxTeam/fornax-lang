@@ -13,53 +13,24 @@ public record ComparisonToken(long Start, long End, Comparison Comparison) : Tok
             return null;
         }
 
-        var @char = pipe.ReadNext()!.Value;
+        var @char = pipe.ReadNext();
 
-        if (@char == '!')
+        switch (@char)
         {
-            @char = pipe.ReadNext()!.Value;
-            if (@char == '=')
-            {
-                return new ComparisonToken(start, pipe.Position, Comparison.NotEqual);
-            }
-
-            return null;
+            case '!':
+                @char = pipe.ReadNext();
+                return @char is '=' ? new ComparisonToken(start, pipe.Position, Comparison.NotEqual) : null;
+            case '=':
+                @char = pipe.ReadNext();
+                return @char is '=' ? new ComparisonToken(start, pipe.Position, Comparison.Equal) : null;
+            case '<':
+                @char = pipe.ReadNext();
+                return @char is '=' ? new ComparisonToken(start, pipe.Position, Comparison.LessOrEqual) : new ComparisonToken(start, pipe.Position, Comparison.Less);
         }
 
-        if (@char == '=')
-        {
-            @char = pipe.ReadNext()!.Value;
-            if (@char == '=')
-            {
-                return new ComparisonToken(start, pipe.Position, Comparison.Equal);
-            }
-
-            return null;
-        }
-        
-        if (@char == '<')
-        {
-            @char = pipe.ReadNext()!.Value;
-            if (@char == '=')
-            {
-                return new ComparisonToken(start, pipe.Position, Comparison.LessOrEqual);
-            }
-
-            return new ComparisonToken(start, pipe.Position, Comparison.Less);
-        }
-        
-        if (@char == '>')
-        {
-            @char = pipe.ReadNext()!.Value;
-            if (@char == '=')
-            {
-                return new ComparisonToken(start, pipe.Position, Comparison.GreaterOrEqual);
-            }
-
-            return new ComparisonToken(start, pipe.Position, Comparison.Greater);
-        }
-        
-        return null;
+        if (@char is not '>') return null;
+        @char = pipe.ReadNext();
+        return @char is '=' ? new ComparisonToken(start, pipe.Position, Comparison.GreaterOrEqual) : new ComparisonToken(start, pipe.Position, Comparison.Greater);
     }
 
 }

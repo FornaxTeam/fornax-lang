@@ -11,7 +11,7 @@ public record SeparatorToken(long Start, long End, Separator Separator) : Token(
             return null;
         }
 
-        var @char = pipe.ReadNext()!.Value;
+        var @char = pipe.ReadNext();
 
         Separator? separator = @char switch
         {

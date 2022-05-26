@@ -8,7 +8,7 @@ namespace Fornax.Compiler.Pipeline.ParserExpressions;
 
 public static class Test
 {
-	public static void Main()
+	public static void _Main()
 	{
 		var block = ParserFragment<Token>.Create()
 			.Expect<BracketToken>()

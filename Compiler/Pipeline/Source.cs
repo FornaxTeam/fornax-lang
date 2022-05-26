@@ -4,27 +4,35 @@ namespace Fornax.Compiler.Pipeline;
 
 public class Source : Pipe<char?>
 {
-    private readonly string data;
+    private readonly StreamReader _streamReader;
 
-    public override long Position { get; set; } = 0;
+    public override long Position
+    {
+        get => _streamReader.BaseStream.Position;
+        set
+        {
+            _streamReader.BaseStream.Position = value;
+            _streamReader.DiscardBufferedData();
+        }
+    }
 
-    public override bool HasNext => Position < data.Length;
+    public override bool HasNext => _streamReader.Peek() != -1;
 
     public override char? ReadNext()
     {
-        if (Position >= data.Length)
-        {
+        var c = _streamReader.Read();
+        if(c == -1)
             return null;
-        }
-
-        var current = data[(int)Position];
         Position++;
-        return current;
+        return (char)c;
     }
 
-    private Source(string path) => data = File.ReadAllText(path);
+    private Source(string path)
+    {
+        _streamReader = new StreamReader(path);
+    }
 
     public static Source Create(string path) => new(path);
 
-    public override string ToString() => data;
+    public override string? ToString() => _streamReader.ToString();
 }
