@@ -78,22 +78,38 @@ public static class Test
                 .MessageIfMissing("'}' expected.")
             .ExpectEnd();
 
+        var errorLineTop = Console.CursorTop;
+
+        Console.WriteLine();
+
         method.Parse(tokens, (message, errorLevel, start, end) =>
         {
-            var prefix = "§6[" + errorLevel switch
+            var prefix = "§f[" + errorLevel switch
             {
                 ErrorLevel.Critical => "§cCRIT",
                 ErrorLevel.Warning => "§eWARN",
                 ErrorLevel.Info => "§3INFO",
                 _ => "§7NONE"
-            } + "§r]: §f";
+            } + "§r]: §7";
 
-            ColoredConsole.WriteLine(prefix + message.Replace("\n", "\n" + prefix) + $" §8[{start}, {end}]");
+            if (start == end)
+            {
+                end++;
+            }
+
+            ColoredConsole.Write("§c" + new string('~', (int)(end - start)), (int)(2 + start), errorLineTop);
+
+            ColoredConsole.WriteLine(prefix + message.Replace("\n", "\n" + prefix) + $" §8({start}, {end})");
         });
 
-        ColoredConsole.WriteLine("§7\nTokens:");
-        foreach (var token in tokens.Finalize())
-            if (token is not null)
-                ColoredConsole.WriteLine("§7 - " + token);
+        //ColoredConsole.WriteLine("§7\nTokens:");
+        //
+        //foreach (var token in tokens.Finalize())
+        //{
+        //    if (token is not null)
+        //    {
+        //        ColoredConsole.WriteLine("§7 - " + token);
+        //    }
+        //}
     }
 }
