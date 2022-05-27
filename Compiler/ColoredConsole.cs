@@ -12,8 +12,11 @@ public static class ColoredConsole
         Console.WriteLine();
     }
 
-    public static void Write(object? obj)
+    public static void Write(object? obj, int left = -1, int top = -1)
     {
+        var posX = left == -1 ? Console.CursorLeft : left;
+        var posY = top == -1 ? Console.CursorTop : top;
+
         var message = "§7" + (obj?.ToString() ?? "");
 
         Stack<ConsoleColor> stack = new();
@@ -21,6 +24,11 @@ public static class ColoredConsole
 
         lock (Console.Out)
         {
+            var (oldX, oldY) = Console.GetCursorPosition();
+
+            Console.CursorLeft = posX;
+            Console.CursorTop = posY;
+
             var startColor = Console.ForegroundColor;
             var match = Regex.Match(message, "(?<text>(.|\n)*?)§(?<color>[0-9A-Fa-fRr])");
 
@@ -47,6 +55,12 @@ public static class ColoredConsole
             }
 
             Console.Write(message);
+
+            if (left != -1)
+            {
+                Console.CursorLeft = oldX;
+                Console.CursorTop = oldY;
+            }
         }
     }
 }
