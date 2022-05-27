@@ -45,6 +45,9 @@ public abstract class Pipe<T>
 
     public IEnumerable<T?> Finalize()
     {
+        var oldPosition = Position;
+        Position = 0;
+
         T? current;
 
         while (true)
@@ -63,7 +66,7 @@ public abstract class Pipe<T>
             yield return current;
         }
 
-        Position = 0;
+        Position = oldPosition;
     }
 
     public bool Fallback(Func<long, bool> action)
