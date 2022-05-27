@@ -79,17 +79,17 @@ public static class Test
             .ExpectEnd();
 
         method.Parse(tokens, (message, errorLevel, start, end) =>
+        {
+            var prefix = "§6[" + errorLevel switch
             {
-                var prefix = "§6[" + errorLevel switch
-                {
-                    ErrorLevel.Critical => "§cCRIT",
-                    ErrorLevel.Warning => "§eWARN",
-                    ErrorLevel.Info => "§3INFO",
-                    _ => "§7NONE"
-                } + "§r]: §f";
+                ErrorLevel.Critical => "§cCRIT",
+                ErrorLevel.Warning => "§eWARN",
+                ErrorLevel.Info => "§3INFO",
+                _ => "§7NONE"
+            } + "§r]: §f";
 
-                ColoredConsole.WriteLine(prefix + message.Replace("\n", "\n" + prefix) + $" §8[{start}, {end}]");
-            });
+            ColoredConsole.WriteLine(prefix + message.Replace("\n", "\n" + prefix) + $" §8[{start}, {end}]");
+        });
 
         ColoredConsole.WriteLine("§7\nTokens:");
         foreach (var token in tokens.Finalize())
