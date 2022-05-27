@@ -66,11 +66,11 @@ public abstract class Pipe<T>
         Position = 0;
     }
 
-    public bool Fallback(Func<bool> action)
+    public bool Fallback(Func<long, bool> action)
     {
         var fallback = Position;
 
-        if (!action())
+        if (!action(fallback))
         {
             Position = fallback;
             return false;
@@ -83,7 +83,7 @@ public abstract class Pipe<T>
     {
         T2? result = default;
 
-        Fallback(() =>
+        Fallback(fallbackPosition =>
         {
             if (ReadNext() is T2 element)
             {

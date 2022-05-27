@@ -47,7 +47,7 @@ public class ParserExpression<T> : IParserExpressionToCount<T>, IParserExpressio
         {
             var isExpected = count.from > i;
 
-            var succsessful = pipe.Fallback(() =>
+            var succsessful = pipe.Fallback(fallbackPosition =>
             {
                 if (pipe.HasNext)
                 {
@@ -67,7 +67,7 @@ public class ParserExpression<T> : IParserExpressionToCount<T>, IParserExpressio
 
                 if (isExpected && messageIfMissing is not null)
                 {
-                    log(messageIfMissing, ErrorLevel.Critical, pipe.Position);
+                    log(messageIfMissing, ErrorLevel.Critical, fallbackPosition);
                 }
 
                 return false;

@@ -36,7 +36,7 @@ public static class Test
             {
                 var isSuccessful = false;
 
-                pipe.Fallback(() =>
+                pipe.Fallback(fallbackPosition =>
                 {
                     isSuccessful = ParserFragment.Create()
                         .Expect<IdentifierToken>()
