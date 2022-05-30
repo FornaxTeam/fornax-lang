@@ -1,6 +1,10 @@
+using System.Text.Json;
+
 namespace Fornax.Compiler.Pipeline.Expressionizer;
 
 public record Expression(long Start, long End)
 {
-    public long Lenght => End - Start;
+    public long Length => End - Start;
+
+    public override string ToString() => GetType().Name + JsonSerializer.Serialize<object>(this);
 }

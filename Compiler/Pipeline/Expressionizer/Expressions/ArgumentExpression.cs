@@ -6,34 +6,35 @@ namespace Fornax.Compiler.Pipeline.Expressionizer.Expressions;
 
 public record ArgumentExpression(long Start, long End, string Type, string Name) : Expression(Start, End)
 {
-    public static (string type, string name) Read(Pipe<Token> pipe, WriteLog log)
+    public static ArgumentExpression Read(Pipe<Token> pipe, WriteLog log)
     {
+        var start = pipe.Position;
         var type = "";
         var name = "";
 
         if (pipe.Fallback(fallbackPosition =>
-            {
-                return ParserFragment.Create()
-                    .Expect<IdentifierToken>()
-                    .Handle(token => type = token.Value)
+        {
+            return ParserFragment.Create()
+                .Expect<IdentifierToken>()
+                .Handle(token => type = token.Value)
                     .MessageIfMissing("Type expected.")
-                    .Expect<SpaceToken>()
+                .Expect<WhitespaceToken>()
                     .MessageIfMissing("Whitespace expected.")
-                    .Expect<IdentifierToken>()
+                .Expect<IdentifierToken>()
                     .Handle(token => name = token.Value)
                     .MessageIfMissing("Parameter name expected.")
-                    .Parse(pipe, null);
-            })) return (type, name);
+                .Parse(pipe, null);
+        }))
         {
-            type = "";
-
-            ParserFragment.Create()
-                .Expect<IdentifierToken>()
-                .Handle(token => name = token.Value)
-                .MessageIfMissing("Parameter name expected.")
-                .Parse(pipe, log);
+            return new(start, pipe.Position, type, name);
         }
 
-        return (type, name);
+        ParserFragment.Create()
+            .Expect<IdentifierToken>()
+                .Handle(token => name = token.Value)
+                .MessageIfMissing("Parameter name expected.")
+            .Parse(pipe, log);
+
+        return new(start, pipe.Position, "", name);
     }
 }

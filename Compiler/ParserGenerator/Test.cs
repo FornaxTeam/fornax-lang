@@ -32,34 +32,34 @@ public static class Test
     public static void PrintLog(Pipe<Token> tokens)
     {
 
-        var parameter = ("", "");
+        ArgumentExpression? parameter = null;
 
         var inputParser = ParserFragment.Create()
-            .Expect<SpaceToken>()
+            .Expect<WhitespaceToken>()
                 .Optional()
             .Expect<IdentifierToken>()
                 .MessageIfMissing("Name expected.")
-            .Expect<SpaceToken>()
+            .Expect<WhitespaceToken>()
                 .Optional()
             .Expect<SeperatorToken>()
                 .Where(token => token.Type == SeperatorType.ValueOpen)
                 .MessageIfMissing("'(' expected.")
-            .Expect<SpaceToken>()
+            .Expect<WhitespaceToken>()
                 .Optional()
             .Call(ArgumentExpression.Read)
                 .Handle(result => parameter = result)
                 .Ok()
-            .Expect<SpaceToken>()
+            .Expect<WhitespaceToken>()
                 .Optional()
             .Expect<SeperatorToken>()
                 .Where(token => token.Type == SeperatorType.ValueClose)
                 .MessageIfMissing("')' expected.")
-            .Expect<SpaceToken>()
+            .Expect<WhitespaceToken>()
                 .Optional()
             .Expect<SeperatorToken>()
                 .Where(token => token.Type == SeperatorType.Command)
                 .MessageIfMissing("';' expected.")
-            .Expect<SpaceToken>()
+            .Expect<WhitespaceToken>()
                 .Optional()
             .ExpectEnd();
 
@@ -87,8 +87,7 @@ public static class Test
             ColoredConsole.WriteLine(prefix + message.Replace("\n", "\n" + prefix) + $" §8({start}, {end})");
         });
 
-        Console.WriteLine(parameter.Item1);
-        Console.WriteLine(parameter.Item2);
+        Console.WriteLine(parameter);
 
         ColoredConsole.WriteLine("§7Tokens:");
 

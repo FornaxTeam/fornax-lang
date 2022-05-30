@@ -10,7 +10,8 @@ public class TokenizerStep : IPipeStep<char?, Token>
 {
     private static readonly Func<Pipe<char?>, Token?>[] readers = new Func<Pipe<char?>, Token?>[]
     {
-        Token.Read<SpaceToken>,
+        Token.Read<WhitespaceToken>,
+        Token.Read<CommentToken>,
 
         Token.Read<SeperatorToken>,
         Token.Read<OperatorToken>,
