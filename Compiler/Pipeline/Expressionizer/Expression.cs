@@ -1,10 +1,6 @@
 namespace Fornax.Compiler.Pipeline.Expressionizer;
 
-public abstract class Expression
+public record Expression(long Start, long End)
 {
-    public long Start { get; set; }
-
-    public long End { get; set; }
-
     public long Lenght => End - Start;
 }
