@@ -1,4 +1,5 @@
 ﻿using Fornax.Compiler.Pipeline;
+using Fornax.Compiler.Pipeline.Expressionizer.Expressions;
 using Fornax.Compiler.Pipeline.Tokenizer;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Seperators;
@@ -30,36 +31,6 @@ public static class Test
 
     public static void PrintLog(Pipe<Token> tokens)
     {
-        static (string type, string name) ExpectParameter(Pipe<Token> pipe, WriteLog log)
-        {
-            var type = "";
-            var name = "";
-
-            if (!pipe.Fallback(fallbackPosition =>
-            {
-                return ParserFragment.Create()
-                    .Expect<IdentifierToken>()
-                        .Handle(token => type = token.Value)
-                        .MessageIfMissing("Type expected.")
-                    .Expect<SpaceToken>()
-                        .MessageIfMissing("Whitespace expected.")
-                    .Expect<IdentifierToken>()
-                        .Handle(token => name = token.Value)
-                        .MessageIfMissing("Parameter name expected.")
-                    .Parse(pipe, null);
-            }))
-            {
-                type = "";
-
-                ParserFragment.Create()
-                    .Expect<IdentifierToken>()
-                        .Handle(token => name = token.Value)
-                        .MessageIfMissing("Parameter name expected.")
-                    .Parse(pipe, log);
-            }
-
-            return (type, name);
-        }
 
         var parameter = ("", "");
 
@@ -75,7 +46,7 @@ public static class Test
                 .MessageIfMissing("'(' expected.")
             .Expect<SpaceToken>()
                 .Optional()
-            .Call(ExpectParameter)
+            .Call(ArgumentExpression.Read)
                 .Handle(result => parameter = result)
                 .Ok()
             .Expect<SpaceToken>()
