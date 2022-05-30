@@ -10,14 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Pipeline\Tokenizer\Tokens\EOLToken.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Pipeline\Tokenizer\Tokens\NewFile1.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Script.fdx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -1,13 +1,12 @@
-﻿using Fornax.Compiler.Pipeline.Tokenizer;
-using System;
+﻿using System;
 
 namespace Fornax.Compiler.ParserGenerator.Interfaces;
 
-public interface IParserExpressionToFinish<T> where T : Token
+public interface IParserExpressionToFinish<T>
 {
-    IParserExpressionToFinish<T> Handle(Action<T> handler);
-
     IParserFragment Optional();
 
     IParserFragment MessageIfMissing(string message);
+
+    IParserExpressionToFinish<T> Handle(Action<T> handler);
 }

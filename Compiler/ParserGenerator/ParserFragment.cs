@@ -70,21 +70,46 @@ public class ParserFragment : IParserFragment
         return expression;
     }
 
-    private record Caller(Action<Pipe<Token>, WriteLog> ExecuteFunc) : IParserExpressionToExecute
-    {
-        public void Execute(Pipe<Token> pipe, WriteLog log) => ExecuteFunc(pipe, log);
-    }
-
     public IParserFragment Call(IParserFragment fragment)
     {
         Expressions.Add(new Caller((pipe, log) => fragment.Parse(pipe, log)));
         return this;
     }
 
-    public IParserFragment Block(Action<Pipe<Token>, WriteLog> body)
+    private class CallResult<T> : ICallResult<T>
     {
-        Expressions.Add(new Caller((pipe, log) => body(pipe, log)));
-        return this;
+        private readonly IParserFragment fragment;
+        private readonly List<Action<T>> handlers = new();
+
+        public CallResult(IParserFragment fragment) => this.fragment = fragment;
+
+        public ICallResult<T> Handle(Action<T> handler)
+        {
+            handlers.Add(handler);
+            return this;
+        }
+
+        public void Execute(T obj)
+        {
+            foreach (var handler in handlers)
+            {
+                handler(obj);
+            }
+        }
+
+        public IParserFragment Ok() => fragment;
+    }
+
+    private record Caller(Action<Pipe<Token>, WriteLog> ExecuteFunc) : IParserExpressionToExecute
+    {
+        public void Execute(Pipe<Token> pipe, WriteLog log) => ExecuteFunc(pipe, log);
+    }
+
+    public ICallResult<T> Call<T>(Callable<T> callable)
+    {
+        var result = new CallResult<T>(this);
+        Expressions.Add(new Caller((pipe, log) => result.Execute(callable(pipe, log))));
+        return result;
     }
 
     public IParserFragment ExpectEnd()

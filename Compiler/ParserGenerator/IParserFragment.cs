@@ -12,9 +12,7 @@ public interface IParserFragment
 
     IParserExpressionToCount<T> Expect<T>() where T : Token;
 
-    IParserFragment Call(IParserFragment fragment);
-
-    IParserFragment Block(Action<Pipe<Token>, WriteLog> handle);
+    ICallResult<T> Call<T>(Callable<T> fragment);
 
     IParserFragment ExpectEnd();
 

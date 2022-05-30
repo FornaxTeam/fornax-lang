@@ -2,27 +2,45 @@
 
 namespace Fornax.Compiler.Pipeline.Tokenizer.Tokens;
 
-public record IdentifierToken(long Start, long End, string Name) : Token(Start, End)
+public class IdentifierToken : Token
 {
-    public static IdentifierToken? Read(Pipe<char?> pipe)
+    public string Value { get; set; } = "";
+
+    protected override bool Read(Pipe<char?> pipe)
     {
         StringBuilder stringBuilder = new();
-        var start = pipe.Position;
+
+        if (pipe.HasNext)
+        {
+            var @char = pipe.ReadNext()!.Value;
+
+            if (char.IsLetter(@char) || @char == '_')
+            {
+                stringBuilder.Append(@char);
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         while (pipe.HasNext)
         {
             var @char = pipe.ReadNext()!.Value;
 
-            if (!char.IsLetter(@char))
+            if (char.IsLetter(@char) || char.IsDigit(@char) || @char == '_')
+            {
+                stringBuilder.Append(@char);
+            }
+            else
             {
                 pipe.Position--;
-                return stringBuilder.Length == 0 ? null : new IdentifierToken(start, pipe.Position, stringBuilder.ToString());
+                Value = stringBuilder.ToString();
+                return true;
             }
-
-            stringBuilder.Append(@char);
         }
-        
-        return stringBuilder.Length > 0 ? new IdentifierToken(start, pipe.Position, stringBuilder.ToString()) : null;
-    }
 
+        Value = stringBuilder.ToString();
+        return true;
+    }
 }

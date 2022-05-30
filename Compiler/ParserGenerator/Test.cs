@@ -1,8 +1,7 @@
 ﻿using Fornax.Compiler.Pipeline;
 using Fornax.Compiler.Pipeline.Tokenizer;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Brackets;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Keywords;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Seperators;
 using System;
 
 namespace Fornax.Compiler.ParserGenerator;
@@ -31,58 +30,73 @@ public static class Test
 
     public static void PrintLog(Pipe<Token> tokens)
     {
-        var parameter = ParserFragment.Create()
-            .Block((pipe, log) =>
+        static (string type, string name) ExpectParameter(Pipe<Token> pipe, WriteLog log)
+        {
+            var type = "";
+            var name = "";
+
+            if (!pipe.Fallback(fallbackPosition =>
             {
-                var isSuccessful = false;
+                return ParserFragment.Create()
+                    .Expect<IdentifierToken>()
+                        .Handle(token => type = token.Value)
+                        .MessageIfMissing("Type expected.")
+                    .Expect<SpaceToken>()
+                        .MessageIfMissing("Whitespace expected.")
+                    .Expect<IdentifierToken>()
+                        .Handle(token => name = token.Value)
+                        .MessageIfMissing("Parameter name expected.")
+                    .Parse(pipe, null);
+            }))
+            {
+                type = "";
 
-                pipe.Fallback(fallbackPosition =>
-                {
-                    isSuccessful = ParserFragment.Create()
-                        .Expect<IdentifierToken>()
-                            .MessageIfMissing("Type expected.")
-                        .Expect<IdentifierToken>()
-                            .MessageIfMissing("Parameter name expected.")
-                        .Parse(pipe, null);
+                ParserFragment.Create()
+                    .Expect<IdentifierToken>()
+                        .Handle(token => name = token.Value)
+                        .MessageIfMissing("Parameter name expected.")
+                    .Parse(pipe, log);
+            }
 
-                    return isSuccessful;
-                });
+            return (type, name);
+        }
 
-                if (!isSuccessful)
-                {
-                    ParserFragment.Create()
-                        .Expect<IdentifierToken>()
-                            .MessageIfMissing("Parameter name expected.")
-                        .Parse(pipe, log);
-                }
-            });
+        var parameter = ("", "");
 
-        var method = ParserFragment.Create()
-            .Expect<KeywordToken>()
-                .Where(token => token.Keyword == Keyword.Export)
+        var inputParser = ParserFragment.Create()
+            .Expect<SpaceToken>()
                 .Optional()
             .Expect<IdentifierToken>()
-                .MessageIfMissing("Method name expected.")
-            .Expect<BracketToken>()
-                .Where(token => token.Bracket == Bracket.Parameter && token.Opened)
+                .MessageIfMissing("Name expected.")
+            .Expect<SpaceToken>()
+                .Optional()
+            .Expect<SeperatorToken>()
+                .Where(token => token.Type == SeperatorType.ValueOpen)
                 .MessageIfMissing("'(' expected.")
-            .Call(parameter)
-            .Expect<BracketToken>()
-                .Where(token => token.Bracket == Bracket.Parameter && !token.Opened)
+            .Expect<SpaceToken>()
+                .Optional()
+            .Call(ExpectParameter)
+                .Handle(result => parameter = result)
+                .Ok()
+            .Expect<SpaceToken>()
+                .Optional()
+            .Expect<SeperatorToken>()
+                .Where(token => token.Type == SeperatorType.ValueClose)
                 .MessageIfMissing("')' expected.")
-            .Expect<BracketToken>()
-                .Where(token => token.Bracket == Bracket.Block && token.Opened)
-                .MessageIfMissing("'{' expected.")
-            .Expect<BracketToken>()
-                .Where(token => token.Bracket == Bracket.Block && !token.Opened)
-                .MessageIfMissing("'}' expected.")
+            .Expect<SpaceToken>()
+                .Optional()
+            .Expect<SeperatorToken>()
+                .Where(token => token.Type == SeperatorType.Command)
+                .MessageIfMissing("';' expected.")
+            .Expect<SpaceToken>()
+                .Optional()
             .ExpectEnd();
 
         var errorLineTop = Console.CursorTop;
 
         Console.WriteLine();
 
-        method.Parse(tokens, (message, errorLevel, start, end) =>
+        inputParser.Parse(tokens, (message, errorLevel, start, end) =>
         {
             var prefix = "§f[" + errorLevel switch
             {
@@ -102,14 +116,17 @@ public static class Test
             ColoredConsole.WriteLine(prefix + message.Replace("\n", "\n" + prefix) + $" §8({start}, {end})");
         });
 
-        //ColoredConsole.WriteLine("§7\nTokens:");
-        //
-        //foreach (var token in tokens.Finalize())
-        //{
-        //    if (token is not null)
-        //    {
-        //        ColoredConsole.WriteLine("§7 - " + token);
-        //    }
-        //}
+        Console.WriteLine(parameter.Item1);
+        Console.WriteLine(parameter.Item2);
+
+        ColoredConsole.WriteLine("§7Tokens:");
+
+        foreach (var token in tokens.Finalize())
+        {
+            if (token is not null)
+            {
+                ColoredConsole.WriteLine("§7 - " + token);
+            }
+        }
     }
 }

@@ -1,15 +1,8 @@
-using System;
-using System.Collections.Generic;
-
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Brackets;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Keywords;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Comparison;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Mark;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.MathOperation;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Separator;
-using System.Linq;
-using System.Reflection;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Literals;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Operators;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Seperators;
+using System;
 
 namespace Fornax.Compiler.Pipeline.Tokenizer;
 
@@ -17,130 +10,66 @@ public class TokenizerStep : IPipeStep<char?, Token>
 {
     private static readonly Func<Pipe<char?>, Token?>[] readers = new Func<Pipe<char?>, Token?>[]
     {
-        ComparisonToken.Read,
-        ArrowToken.Read,
-        AssignmentToken.Read,
-        BracketToken.Read,
-        StringToken.Read,
-        NumberToken.Read,
-        MarkToken.Read,
-        MathOperationToken.Read,
-        SeparatorToken.Read,
-        EndOfCommandToken.Read,
-        SeparatorToken.Read,
-        KeywordToken.Read,
-        IdentifierToken.Read,
-        AnnotationToken.Read
+        Token.Read<SpaceToken>,
+
+        Token.Read<SeperatorToken>,
+        Token.Read<OperatorToken>,
+        Token.Read<KeywordToken>,
+
+        Token.Read<StringToken>,
+        Token.Read<NumberToken>,
+        Token.Read<IdentifierToken>,
     };
 
-    public Token? Execute(Pipe<char?> pipe)
-    {
-        RemoveEmptyAreas(pipe);
+    public Token? Execute(Pipe<char?> pipe) => Execute(pipe, false);
 
+    public Token? Execute(Pipe<char?> pipe, bool calledByExecute)
+    {
         var fallback = pipe.Position;
 
-        foreach (var reader in readers)
+        if (pipe.HasNext)
         {
-            var token = reader(pipe);
-
-            if (token != null)
+            foreach (var reader in readers)
             {
-                if (token.Length == 0)
+                var token = reader(pipe);
+
+                if (token != null)
                 {
-                    continue;
+                    if (token.Length == 0)
+                    {
+                        continue;
+                    }
+
+                    return token;
                 }
 
-                return token;
+                pipe.Position = fallback;
             }
 
-            pipe.Position = fallback;
-        }
+            if (!calledByExecute)
+            {
+                var invalidTokenStart = pipe.Position;
 
-        RemoveEmptyAreas(pipe);
+                while (pipe.HasNext)
+                {
+                    var oldPosition = pipe.Position;
+                    var expand = Execute(pipe, true) is null;
+
+                    if (expand)
+                    {
+                        pipe.Position = oldPosition + 1;
+                    }
+                    else
+                    {
+                        pipe.Position = oldPosition;
+                        break;
+                    }
+                }
+
+                return new InvalidToken(invalidTokenStart, pipe.Position);
+            }
+        }
 
         return null;
-    }
-
-    private static void RemoveEmptyAreas(Pipe<char?> pipe)
-    {
-        var comments = true;
-
-        while (comments)
-        {
-            RemoveWhitespaces(pipe);
-            comments = RemoveComment(pipe);
-            RemoveWhitespaces(pipe);
-        }
-    }
-
-    private static void RemoveWhitespaces(Pipe<char?> pipe)
-    {
-        while (true)
-        {
-            var @char = pipe.ReadNext();
-
-            if (@char == null)
-            {
-                return;
-            }
-
-            if (!char.IsWhiteSpace(@char.Value))
-            {
-                pipe.Position--;
-                break;
-            }
-        }
-    }
-
-    private static bool RemoveComment(Pipe<char?> pipe)
-    {
-        var @char = pipe.ReadNext();
-
-        if (@char == '/')
-        {
-            @char = pipe.ReadNext();
-
-            if (@char is not ('/' or '*'))
-            {
-                if (pipe.HasNext)
-                {
-                    pipe.Position -= 2;
-                }
-                else
-                {
-                    pipe.Position--;
-                }
-
-                return false;
-            }
-
-            var multiLine = @char == '*';
-
-            var firstStar = false;
-
-            while (true)
-            {
-                @char = pipe.ReadNext();
-
-                if ((@char is '\n' or '\r' && !multiLine)
-                    || (multiLine && firstStar && @char == '/'))
-                {
-                    break;
-                }
-
-                firstStar = @char == '*';
-            }
-        }
-        else
-        {
-            if (@char != null)
-            {
-                pipe.Position--;
-            }
-
-            return false;
-        }
-
-        return true;
     }
 }
