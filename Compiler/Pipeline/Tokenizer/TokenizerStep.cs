@@ -1,43 +1,73 @@
-using System;
-using System.Collections.Generic;
-
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Brackets;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Keywords;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Comparison;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Mark;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.MathOperation;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Separator;
-using System.Linq;
-using System.Reflection;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Literals;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Operators;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Seperators;
+using System;
 
 namespace Fornax.Compiler.Pipeline.Tokenizer;
 
 public class TokenizerStep : IPipeStep<char?, Token>
 {
-    public Token? Execute(Pipe<char?> pipe)
+    private static readonly Func<Pipe<char?>, Token?>[] readers = new Func<Pipe<char?>, Token?>[]
     {
-        var readers = Assembly.GetExecutingAssembly()
-            .GetTypes()
-            .Where(type => type.BaseType == typeof(Token))
-            .Select(type => new Func<Pipe<char?>, Token?>(current => (Token?)type.GetMethod("Read")!.Invoke(null, new object?[] { current })))
-            .ToList();
+        Token.Read<SpaceToken>,
 
+        Token.Read<SeperatorToken>,
+        Token.Read<OperatorToken>,
+        Token.Read<KeywordToken>,
+
+        Token.Read<StringToken>,
+        Token.Read<NumberToken>,
+        Token.Read<IdentifierToken>,
+    };
+
+    public Token? Execute(Pipe<char?> pipe) => Execute(pipe, false);
+
+    public Token? Execute(Pipe<char?> pipe, bool calledByExecute)
+    {
         var fallback = pipe.Position;
 
-        foreach (var token in readers.Select(reader => reader(pipe)))
+        if (pipe.HasNext)
         {
-            if (token != null)
+            foreach (var reader in readers)
             {
-                if (token.Length == 0)
+                var token = reader(pipe);
+
+                if (token != null)
                 {
-                    continue;
+                    if (token.Length == 0)
+                    {
+                        continue;
+                    }
+
+                    return token;
                 }
 
-                return token;
+                pipe.Position = fallback;
             }
 
-            pipe.Position = fallback;
+            if (!calledByExecute)
+            {
+                var invalidTokenStart = pipe.Position;
+
+                while (pipe.HasNext)
+                {
+                    var oldPosition = pipe.Position;
+                    var expand = Execute(pipe, true) is null;
+
+                    if (expand)
+                    {
+                        pipe.Position = oldPosition + 1;
+                    }
+                    else
+                    {
+                        pipe.Position = oldPosition;
+                        break;
+                    }
+                }
+
+                return new InvalidToken(invalidTokenStart, pipe.Position);
+            }
         }
 
         return null;

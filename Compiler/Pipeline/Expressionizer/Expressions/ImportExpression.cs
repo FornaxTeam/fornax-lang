@@ -8,6 +8,7 @@ public class ImportExpression : Expression
         Path = path;
     }
 
-    public string Library { get; private set; }
-    public string Path { get; private set; }
+    public string Library { get; private set; } = "";
+
+    public string Path { get; private set; } = "";
 }

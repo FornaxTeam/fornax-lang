@@ -8,6 +8,7 @@ public class ArgumentExpression : Expression
         Name = name;
     }
 
-    public string Type { get; private set; }
-    public string Name { get; private set; }
+    public string Type { get; private set; } = "";
+
+    public string Name { get; private set; } = "";
 }

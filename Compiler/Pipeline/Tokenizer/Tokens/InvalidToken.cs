@@ -1,6 +1,13 @@
 ﻿namespace Fornax.Compiler.Pipeline.Tokenizer.Tokens;
 
-public record InvalidToken(long Start, long End) : Token(Start, End)
+public class InvalidToken : Token
 {
-    public static InvalidToken? Read(Pipe<char?> pipe) => null;
+    protected override bool Read(Pipe<char?> pipe) => false;
+
+    public InvalidToken(long start, long end)
+    {
+        Start = start;
+        End = end;
+    }
 }
+

@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Fornax.Compiler.Pipeline.Expressionizer.Expressions;
 
 public class ExecuteExpression : Expression
@@ -8,6 +11,7 @@ public class ExecuteExpression : Expression
         Args = args;
     }
 
-    public string Name { get; private set; }
-    public string[] Args { get; private set; }
+    public string Name { get; private set; } = "";
+
+    public List<string> Args { get; } = new();
 }

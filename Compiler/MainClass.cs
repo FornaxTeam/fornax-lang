@@ -9,7 +9,7 @@ public static class MainClass
 {
     public static void Main()
     {
-        var source = Source.Create("Script.fdx");
+        var source = Source.FromFile("Script.fdx");
 
         Console.WriteLine();
         Console.WriteLine("Source:");

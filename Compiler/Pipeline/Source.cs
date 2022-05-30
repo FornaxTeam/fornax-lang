@@ -10,11 +10,25 @@ public class Source : Pipe<char?>
 
     public override bool HasNext => Position < data.Length;
 
-    public override char? ReadNext() => HasNext ? data[(int)Position++] : null;
+    public override long Length => data.Length;
 
-    private Source(string path) => data = File.ReadAllText(path);
+    public override char? ReadNext()
+    {
+        if (Position >= data.Length)
+        {
+            return null;
+        }
 
-    public static Source Create(string path) => new(path);
+        var current = data[(int)Position];
+        Position++;
+        return current;
+    }
+
+    private Source(string data) => this.data = data;
+
+    public static Source FromFile(string path) => new(File.ReadAllText(path));
+
+    public static Source FromData(string data) => new(data);
 
     public override string ToString() => data;
 }
