@@ -1,51 +1,61 @@
-using System.Collections.Generic;
-using System.Text;
-
 namespace Fornax.Compiler.Pipeline.Tokenizer.Tokens;
 
-
-
-public record CommentToken(long Start, long End, bool MultiLine) : Token(Start, End)
+public class CommentToken : Token
 {
-    public static CommentToken? Read(Pipe<char?> pipe)
+    public bool MultiLine { get; private set; } = false;
+
+    protected override bool Read(Pipe<char?> pipe)
     {
-        var start = pipe.Position;
-        var multiLine = false;
         var @char = pipe.ReadNext();
+
         if (@char != '/')
-            return null;
+        {
+            return false;
+        }
+
         @char = pipe.ReadNext();
+
         switch (@char)
         {
             case '/':
+                while (pipe.HasNext)
                 {
-                    while (pipe.HasNext)
-                    {
-                        @char = pipe.ReadNext();
-                        if (@char == '\n')
-                            break;
-                    }
+                    @char = pipe.ReadNext();
 
-                    break;
+                    if (@char == '\n')
+                    {
+                        break;
+                    }
                 }
+
+                break;
+
             case '*':
+                MultiLine = true;
+
+                while (pipe.HasNext)
                 {
-                    multiLine = true;
-                    while (pipe.HasNext)
+                    @char = pipe.ReadNext();
+
+                    if (@char != '*')
                     {
-                        @char = pipe.ReadNext();
-                        if (@char != '*') continue;
-                        @char = pipe.ReadNext();
-                        if (@char == '/')
-                            break;
+                        continue;
                     }
 
-                    break;
+                    @char = pipe.ReadNext();
+
+                    if (@char == '/')
+                    {
+                        break;
+                    }
                 }
+
+                break;
+
             default:
-                return null;
+                return false;
         }
-        
-        return new CommentToken(start, pipe.Position, multiLine);
+
+        return true;
     }
 }

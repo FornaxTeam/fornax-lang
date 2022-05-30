@@ -1,27 +1,28 @@
 using System.Collections.Generic;
-using System.Text;
 
 namespace Fornax.Compiler.Pipeline.Tokenizer.Tokens;
 
-public enum WhitespaceType
+public class WhitespaceToken : Token
 {
-    Tab,
-    Space,
-    NewLine,
-}
-
-public record Whitespace(WhitespaceType Type, int Length);
-
-public record WhitespaceToken(long Start, long End, List<Whitespace> Whitespaces) : Token(Start, End)
-{
-    public static WhitespaceToken? Read(Pipe<char?> pipe)
+    public enum WhitespaceType
     {
-        var start = pipe.Position;
-        var whitespaces = new List<Whitespace>();
+        Tab,
+        Space,
+        NewLine,
+    }
+
+    public record Whitespace(WhitespaceType Type, int Length);
+
+    public List<Whitespace> Whitespaces { get; } = new();
+
+    protected override bool Read(Pipe<char?> pipe)
+    {
         Whitespace? whitespace = null;
+
         while (pipe.HasNext)
         {
             var @char = pipe.ReadNext();
+
             if (@char == '\t')
             {
                 if (whitespace?.Type == WhitespaceType.Tab)
@@ -32,8 +33,9 @@ public record WhitespaceToken(long Start, long End, List<Whitespace> Whitespaces
                 {
                     if (whitespace != null)
                     {
-                        whitespaces.Add(whitespace);
+                        Whitespaces.Add(whitespace);
                     }
+
                     whitespace = new Whitespace(WhitespaceType.Tab, 1);
                 }
             }
@@ -47,8 +49,9 @@ public record WhitespaceToken(long Start, long End, List<Whitespace> Whitespaces
                 {
                     if (whitespace != null)
                     {
-                        whitespaces.Add(whitespace);
+                        Whitespaces.Add(whitespace);
                     }
+
                     whitespace = new Whitespace(WhitespaceType.Space, 1);
                 }
             }
@@ -62,25 +65,24 @@ public record WhitespaceToken(long Start, long End, List<Whitespace> Whitespaces
                 {
                     if (whitespace != null)
                     {
-                        whitespaces.Add(whitespace);
+                        Whitespaces.Add(whitespace);
                     }
+
                     whitespace = new Whitespace(WhitespaceType.NewLine, 1);
                 }
             }
             else
             {
+                pipe.Position--;
                 break;
             }
         }
+
         if (whitespace != null)
         {
-            whitespaces.Add(whitespace);
+            Whitespaces.Add(whitespace);
         }
-        if (whitespaces.Count == 0)
-        {
-            return null;
-        }
-        var end = pipe.Position;
-        return new WhitespaceToken(start, end, whitespaces);
+
+        return Whitespaces.Count != 0;
     }
 }
