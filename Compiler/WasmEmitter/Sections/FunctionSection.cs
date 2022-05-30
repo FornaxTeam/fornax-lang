@@ -1,4 +1,7 @@
-﻿namespace Fornax.Compiler.WasmEmitter.Sections;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Fornax.Compiler.WasmEmitter.Sections;
 
 public class FunctionSection : Section
 {
