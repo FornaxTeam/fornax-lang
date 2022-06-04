@@ -1,4 +1,5 @@
-﻿using Fornax.Compiler.Pipeline;
+﻿using Fornax.Compiler.Logging;
+using Fornax.Compiler.Pipeline;
 using Fornax.Compiler.Pipeline.Expressionizer.Expressions;
 using Fornax.Compiler.Pipeline.Tokenizer;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens;
@@ -31,36 +32,12 @@ public static class Test
 
     public static void PrintLog(Pipe<Token> tokens)
     {
-
-        ArgumentExpression? parameter = null;
+        MethodExpression? method = null;
 
         var inputParser = ParserFragment.Create()
-            .Expect<WhitespaceToken>()
-                .Optional()
-            .Expect<IdentifierToken>()
-                .MessageIfMissing("Name expected.")
-            .Expect<WhitespaceToken>()
-                .Optional()
-            .Expect<SeperatorToken>()
-                .Where(token => token.Type == SeperatorType.ValueOpen)
-                .MessageIfMissing("'(' expected.")
-            .Expect<WhitespaceToken>()
-                .Optional()
-            .Call(ArgumentExpression.Read)
-                .Handle(result => parameter = result)
+            .Call(MethodExpression.Read)
+                .Handle(result => method = result)
                 .Ok()
-            .Expect<WhitespaceToken>()
-                .Optional()
-            .Expect<SeperatorToken>()
-                .Where(token => token.Type == SeperatorType.ValueClose)
-                .MessageIfMissing("')' expected.")
-            .Expect<WhitespaceToken>()
-                .Optional()
-            .Expect<SeperatorToken>()
-                .Where(token => token.Type == SeperatorType.Command)
-                .MessageIfMissing("';' expected.")
-            .Expect<WhitespaceToken>()
-                .Optional()
             .ExpectEnd();
 
         var errorLineTop = Console.CursorTop;
@@ -87,7 +64,7 @@ public static class Test
             ColoredConsole.WriteLine(prefix + message.Replace("\n", "\n" + prefix) + $" §8({start}, {end})");
         });
 
-        Console.WriteLine(parameter);
+        Console.WriteLine(method);
 
         ColoredConsole.WriteLine("§7Tokens:");
 
