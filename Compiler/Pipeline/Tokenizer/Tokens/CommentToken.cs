@@ -2,7 +2,7 @@ namespace Fornax.Compiler.Pipeline.Tokenizer.Tokens;
 
 public class CommentToken : Token
 {
-    public static bool Multiline { get; private set; } = false;
+    public bool MultiLine { get; private set; } = false;
 
     protected override bool Read(Pipe<char?> pipe)
     {
@@ -31,7 +31,7 @@ public class CommentToken : Token
                 break;
 
             case '*':
-                Multiline = true;
+                MultiLine = true;
 
                 while (pipe.HasNext)
                 {

@@ -14,6 +14,7 @@ public class TokenizerStep : IPipeStep<char?, Token>
         Token.Read<WhitespaceToken>,
         Token.Read<CommentToken>,
 
+        Token.Read<CommentToken>,
         Token.Read<SeperatorToken>,
         Token.Read<OperatorToken>,
         Token.Read<KeywordToken>,

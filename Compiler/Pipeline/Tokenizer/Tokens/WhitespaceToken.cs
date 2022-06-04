@@ -22,6 +22,7 @@ public class WhitespaceToken : Token
         while (pipe.HasNext)
         {
             var @char = pipe.ReadNext();
+
             if (@char == '\t')
             {
                 if (whitespace?.Type == WhitespaceType.Tab)
