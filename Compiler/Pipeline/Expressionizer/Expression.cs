@@ -6,5 +6,8 @@ public record Expression(long Start, long End)
 {
     public long Length => End - Start;
 
-    public override string ToString() => GetType().Name + JsonSerializer.Serialize<object>(this);
+    public override string ToString() => GetType().Name + JsonSerializer.Serialize<object>(this, new JsonSerializerOptions()
+    {
+        WriteIndented = true
+    });
 }
