@@ -4,6 +4,7 @@ using Fornax.Compiler.Pipeline.Tokenizer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Fornax.Compiler.Logging;
 
 namespace Fornax.Compiler.ParserGenerator;
 

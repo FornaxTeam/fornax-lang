@@ -1,4 +1,5 @@
-﻿using Fornax.Compiler.ParserGenerator.Interfaces;
+﻿using Fornax.Compiler.Logging;
+using Fornax.Compiler.ParserGenerator.Interfaces;
 using Fornax.Compiler.Pipeline;
 using Fornax.Compiler.Pipeline.Tokenizer;
 using System;
