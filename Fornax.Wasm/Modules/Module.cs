@@ -2,7 +2,7 @@
 using Fornax.Wasm.Sections;
 using System;
 
-namespace Fornax.Wasm.Module;
+namespace Fornax.Wasm.Modules;
 
 public sealed class Module : ChildBasedBinaryNode
 {

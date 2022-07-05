@@ -1,5 +1,5 @@
 ﻿using Fornax.Wasm.BaseNodes;
-using Fornax.Wasm.Section;
+using Fornax.Wasm.Sections;
 using Fornax.Wasm.Sections.Type;
 using System;
 using System.Collections.Generic;

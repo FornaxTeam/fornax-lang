@@ -1,8 +1,8 @@
 ﻿using Fornax.Wasm.BaseNodes;
-using Fornax.Wasm.Section;
+using Fornax.Wasm.Sections;
 using System.IO;
 
-namespace Fornax.Wasm.Module.Section;
+namespace Fornax.Wasm.Modules.Section;
 
 public sealed class SectionTypeBinaryNode : ValueBasedBinaryNode
 {

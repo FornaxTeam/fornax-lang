@@ -1,7 +1,7 @@
 ﻿using Fornax.Wasm.BaseNodes;
 using System.IO;
 
-namespace Fornax.Wasm.Module;
+namespace Fornax.Wasm.Modules;
 
 public sealed class ModuleVersion : ValueBasedBinaryNode
 {
