@@ -2,7 +2,7 @@
 using Fornax.Compiler.ParserGenerator;
 using Fornax.Compiler.Pipeline.Tokenizer;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Literals;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Seperators;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Separators;
 using System;
 using System.Collections.Generic;
 using System.Linq;

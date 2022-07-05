@@ -25,6 +25,7 @@ public enum KeywordType
     Continue,
 
     If,
+    Else,
     While,
     For,
     Match,

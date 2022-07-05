@@ -3,7 +3,7 @@ using Fornax.Compiler.ParserGenerator;
 using Fornax.Compiler.Pipeline.Tokenizer;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Keywords;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Seperators;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Separators;
 using System;
 using System.Collections.Generic;
 
@@ -28,8 +28,8 @@ public record MethodExpression(long Start, long End, bool Export, ArgumentExpres
                 .Optional()
             .Expect<IdentifierToken>()
                 .MessageIfMissing("Name expected.")
-            .Expect<SeperatorToken>()
-                .Where(token => token.Type == SeperatorType.ValueOpen)
+            .Expect<SeparatorToken>()
+                .Where(token => token.Type == SeparatorType.ValueOpen)
                 .MessageIfMissing("'(' expected.")
             .Call((pipe, log) =>
                 {
@@ -47,8 +47,8 @@ public record MethodExpression(long Start, long End, bool Export, ArgumentExpres
                             if (argumentBefore is not null)
                             {
                                 ParserFragment.Create()
-                                    .Expect<SeperatorToken>()
-                                        .Where(token => token.Type == SeperatorType.Value)
+                                    .Expect<SeparatorToken>()
+                                        .Where(token => token.Type == SeparatorType.Value)
                                         .MessageIfMissing("',' expected.")
                                     .Parse(pipe, bufferedLogger.Log);
                             }
@@ -93,8 +93,8 @@ public record MethodExpression(long Start, long End, bool Export, ArgumentExpres
                 })
                 .Handle(result => arguments = result)
                 .Ok()
-            .Expect<SeperatorToken>()
-                .Where(token => token.Type == SeperatorType.ValueClose)
+            .Expect<SeparatorToken>()
+                .Where(token => token.Type == SeparatorType.ValueClose)
                 .MessageIfMissing("')' expected.")
             .Call(BlockExpression.Read)
                 .Handle(blockExpression => block = blockExpression)

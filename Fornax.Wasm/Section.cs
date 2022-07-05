@@ -2,7 +2,7 @@
 
 public abstract class Section : ChildBasedBinaryNode
 {
-    public override IBinaryNode[] Childs => new IBinaryNode[]
+    public override IBinaryNode[] Children => new IBinaryNode[]
     {
         new SectionTypeBinaryNode(Type),
         new UnsignedLeb128Number(Body.Length),

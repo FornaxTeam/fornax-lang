@@ -9,7 +9,7 @@ public interface IBinaryNode
 
     long Position { get; set; }
 
-    IEnumerable<IBinaryNode> Childs { get; }
+    IEnumerable<IBinaryNode> Children { get; }
 
     void Read(NodeReader reader);
 

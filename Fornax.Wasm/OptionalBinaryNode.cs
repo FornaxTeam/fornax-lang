@@ -24,7 +24,7 @@ public sealed class OptionalBinaryNode<T> : IBinaryNode, IHasBinaryNodeValue whe
 
     public long Position { get; set; }
 
-    public IEnumerable<IBinaryNode> Childs => Value is null ? Enumerable.Empty<IBinaryNode>() : new[] { Value };
+    public IEnumerable<IBinaryNode> Children => Value is null ? Enumerable.Empty<IBinaryNode>() : new[] { Value };
 
     public OptionalBinaryNode(Reference<T> reference) => this.reference = reference;
 

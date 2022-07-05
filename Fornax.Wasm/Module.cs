@@ -6,7 +6,7 @@ public sealed class Module : ChildBasedBinaryNode
 {
     public TypeSection? TypeSection { get; set; } = null;
 
-    public override IBinaryNode[] Childs => new IBinaryNode[]
+    public override IBinaryNode[] Children => new IBinaryNode[]
     {
         new MagicValue(),
         new ModuleVersion(),

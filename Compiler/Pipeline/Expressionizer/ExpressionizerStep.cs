@@ -1,6 +1,7 @@
 ﻿using Fornax.Compiler.Logging;
 using Fornax.Compiler.ParserGenerator;
 using Fornax.Compiler.Pipeline.Expressionizer.Expressions;
+using Fornax.Compiler.Pipeline.Expressionizer.Expressions.InnerBlock;
 using Fornax.Compiler.Pipeline.Tokenizer;
 
 namespace Fornax.Compiler.Pipeline.Expressionizer;
@@ -12,7 +13,7 @@ public class ExpressionizerStep : IPipeStep<Token, Expression>
         Expression? result = null;
 
         ParserFragment.Create()
-            .Call(MethodExpression.Read)
+            .Call(OperationExpression.Read)
                 .Handle(document => result = document)
                 .Ok()
             .Parse(pipe, log);

@@ -12,7 +12,7 @@ public sealed class TypeSection : Section
     {
         public List<FunctionType> Types { get; set; } = new();
 
-        public override IEnumerable<IBinaryNode> Childs
+        public override IEnumerable<IBinaryNode> Children
         {
             get
             {

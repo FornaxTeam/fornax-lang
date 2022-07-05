@@ -3,7 +3,7 @@ using Fornax.Compiler.ParserGenerator;
 using Fornax.Compiler.Pipeline.Expressionizer.Expressions.InnerBlock;
 using Fornax.Compiler.Pipeline.Tokenizer;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Seperators;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Separators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,8 +22,8 @@ public record BlockExpression(long Start, long End, ICommandExpression[] Command
         List<ICommandExpression> commands = new();
 
         ParserFragment.Create()
-            .Expect<SeperatorToken>()
-                .Where(token => token.Type == SeperatorType.BlockOpen)
+            .Expect<SeparatorToken>()
+                .Where(token => token.Type == SeparatorType.BlockOpen)
                 .MessageIfMissing("'{' expected.")
             .Call((Pipe<Token> pipe, WriteLog log) =>
             {
@@ -66,8 +66,8 @@ public record BlockExpression(long Start, long End, ICommandExpression[] Command
             })
                 .Handle(commands.Add)
                 .Ok()
-            .Expect<SeperatorToken>()
-                .Where(token => token.Type == SeperatorType.BlockClose)
+            .Expect<SeparatorToken>()
+                .Where(token => token.Type == SeparatorType.BlockClose)
                 .MessageIfMissing("'}' expected.")
             .Parse(pipe, log);
 

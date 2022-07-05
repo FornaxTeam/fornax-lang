@@ -16,5 +16,5 @@ public abstract class ValueBasedBinaryNode : IBinaryNode
 
     public long Position { get; set; }
 
-    public IEnumerable<IBinaryNode> Childs => Enumerable.Empty<IBinaryNode>();
+    public IEnumerable<IBinaryNode> Children => Enumerable.Empty<IBinaryNode>();
 }

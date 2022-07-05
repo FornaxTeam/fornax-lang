@@ -3,7 +3,7 @@ using Fornax.Compiler.Pipeline.Tokenizer.Tokens;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Keywords;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Literals;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Operators;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Seperators;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Separators;
 using System;
 
 namespace Fornax.Compiler.Pipeline.Tokenizer;
@@ -12,7 +12,7 @@ public class TokenizerStep : IPipeStep<char?, Token>
 {
     private static readonly Func<Pipe<char?>, WriteLog, Token?>[] readers = new Func<Pipe<char?>, WriteLog, Token?>[]
     {
-        Token.Read<SeperatorToken>,
+        Token.Read<SeparatorToken>,
         Token.Read<OperatorToken>,
         Token.Read<KeywordToken>,
 

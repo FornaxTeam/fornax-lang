@@ -6,15 +6,15 @@ namespace Fornax.Wasm;
 
 public abstract class ChildBasedBinaryNode : IBinaryNode
 {
-    public abstract IEnumerable<IBinaryNode> Childs { get; }
+    public abstract IEnumerable<IBinaryNode> Children { get; }
 
-    public long Length => Childs.Sum(child => child.Length);
+    public long Length => Children.Sum(child => child.Length);
 
     public long Position { get; set; }
 
     public void Read(NodeReader reader)
     {
-        foreach (var child in Childs)
+        foreach (var child in Children)
         {
             child.Read(reader);
         }
@@ -22,7 +22,7 @@ public abstract class ChildBasedBinaryNode : IBinaryNode
 
     public void Reset()
     {
-        foreach (var child in Childs)
+        foreach (var child in Children)
         {
             child.Reset();
         }
@@ -30,7 +30,7 @@ public abstract class ChildBasedBinaryNode : IBinaryNode
 
     public void Write(Stream stream)
     {
-        foreach (var child in Childs)
+        foreach (var child in Children)
         {
             child.Write(stream);
         }

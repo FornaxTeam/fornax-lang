@@ -10,7 +10,7 @@ public class FunctionType : ChildBasedBinaryNode
 
     public BaseType[] Results { get; set; } = Array.Empty<BaseType>();
 
-    public override IEnumerable<IBinaryNode> Childs
+    public override IEnumerable<IBinaryNode> Children
     {
         get
         {

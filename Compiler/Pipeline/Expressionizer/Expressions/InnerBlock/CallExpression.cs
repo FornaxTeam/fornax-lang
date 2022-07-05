@@ -3,7 +3,7 @@ using Fornax.Compiler.ParserGenerator;
 using Fornax.Compiler.Pipeline.Expressionizer.Expressions.InnerBlock.Constants;
 using Fornax.Compiler.Pipeline.Tokenizer;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens;
-using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Seperators;
+using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Separators;
 using System.Collections.Generic;
 
 namespace Fornax.Compiler.Pipeline.Expressionizer.Expressions.InnerBlock;
@@ -22,14 +22,14 @@ public record CallExpression(long Start, long End, IdentifierToken? Name, IValue
             .Expect<IdentifierToken>()
                 .Handle(token => name = token)
                 .MessageIfMissing("Name of method expected.")
-            .Expect<SeperatorToken>()
-                .Where(token => token.Type == SeperatorType.ValueOpen)
+            .Expect<SeparatorToken>()
+                .Where(token => token.Type == SeparatorType.ValueOpen)
                 .MessageIfMissing("'(' expected.")
             .Call(StringConstant.Read)
                 .Handle(parameters.Add)
                 .Ok()
-            .Expect<SeperatorToken>()
-                .Where(token => token.Type == SeperatorType.ValueClose)
+            .Expect<SeparatorToken>()
+                .Where(token => token.Type == SeparatorType.ValueClose)
                 .MessageIfMissing("')' expected.")
             .Parse(pipe, log);
 
@@ -44,8 +44,8 @@ public record CallExpression(long Start, long End, IdentifierToken? Name, IValue
             .Call(Read)
                 .Handle(expression => result = expression)
                 .Ok()
-            .Expect<SeperatorToken>()
-                .Where(token => token.Type == SeperatorType.Command)
+            .Expect<SeparatorToken>()
+                .Where(token => token.Type == SeparatorType.Command)
                 .MessageIfMissing("';' expected.")
             .Parse(pipe, log);
 

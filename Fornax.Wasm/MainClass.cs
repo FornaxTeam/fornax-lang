@@ -61,7 +61,7 @@ public static class MainClass
         {
             Console.WriteLine($"{prefix}+ {childNode.GetType().Name}{(isOptional ? "?" : "")}");
 
-            foreach (var child in childNode.Childs)
+            foreach (var child in childNode.Children)
             {
                 PrintNode(child, level + 1);
             }

@@ -42,7 +42,7 @@ public static class MainClass
 
         expressions
             .Finalize(Log)
-            .Cast<ITopLevelExpression>()
+            .Cast<IValueExpression>()
             .ForEach(Console.WriteLine);
 
         Console.ReadKey();
