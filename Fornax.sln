@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compiler", "Compiler\Compil
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fornax.CLI", "Fornax.CLI\Fornax.CLI.csproj", "{8D316015-AC91-4B12-8C99-E849F094E80F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wasm", "Wasm\Wasm.csproj", "{51FE14D8-9C9B-4499-9707-F8344BDAA5C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wasm", "Fornax.Wasm\Fornax.Wasm.csproj", "{51FE14D8-9C9B-4499-9707-F8344BDAA5C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
