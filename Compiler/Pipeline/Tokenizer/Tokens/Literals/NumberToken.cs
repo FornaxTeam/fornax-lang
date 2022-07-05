@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fornax.Compiler.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +9,11 @@ namespace Fornax.Compiler.Pipeline.Tokenizer.Tokens.Literals;
 
 public class NumberToken : Token
 {
-    protected override bool Read(Pipe<char?> pipe)
+    protected override bool Read(Pipe<char?> pipe, WriteLog log)
     {
         while (pipe.HasNext)
         {
-            var @char = pipe.ReadNext()!.Value;
+            var @char = pipe.ReadNext(log)!.Value;
 
             if (!char.IsNumber(@char))
             {
@@ -22,7 +23,7 @@ public class NumberToken : Token
 
                     while (pipe.HasNext)
                     {
-                        @char = pipe.ReadNext()!.Value;
+                        @char = pipe.ReadNext(log)!.Value;
 
                         if (!char.IsNumber(@char))
                         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fornax.Compiler.Logging;
+using System;
 
 namespace Fornax.Compiler.Pipeline.Tokenizer.Tokens.Keywords;
 
@@ -6,7 +7,7 @@ public class KeywordToken : Token
 {
     public KeywordType Type { get; private set; }
 
-    protected override bool Read(Pipe<char?> pipe)
+    protected override bool Read(Pipe<char?> pipe, WriteLog log)
     {
         foreach (var keyword in Enum.GetValues<KeywordType>())
         {
@@ -16,7 +17,7 @@ public class KeywordToken : Token
 
                 for (var i = 0; i < keywordString.Length; i++)
                 {
-                    if (!pipe.HasNext || pipe.ReadNext()!.Value != keywordString[i])
+                    if (!pipe.HasNext || pipe.ReadNext(log)!.Value != keywordString[i])
                     {
                         return false;
                     }

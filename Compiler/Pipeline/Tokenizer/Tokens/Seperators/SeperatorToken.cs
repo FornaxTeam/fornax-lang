@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using Fornax.Compiler.Logging;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace Fornax.Compiler.Pipeline.Tokenizer.Tokens.Seperators;
@@ -26,11 +27,11 @@ public class SeperatorToken : Token
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public SeperatorType Type { get; private set; }
 
-    protected override bool Read(Pipe<char?> pipe)
+    protected override bool Read(Pipe<char?> pipe, WriteLog log)
     {
         foreach (var (seperatorType, seperatorString) in operators)
         {
-            if (pipe.Fallback(fallbackPosition => pipe.HasNext && pipe.ReadNext()!.Value == seperatorString))
+            if (pipe.Fallback(fallbackPosition => pipe.HasNext && pipe.ReadNext(log)!.Value == seperatorString))
             {
                 Type = seperatorType;
                 return true;

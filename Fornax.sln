@@ -5,6 +5,10 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compiler", "Compiler\Compiler.csproj", "{91989CD4-D04E-41DD-A3A0-7FEBD07308D5}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fornax.CLI", "Fornax.CLI\Fornax.CLI.csproj", "{8D316015-AC91-4B12-8C99-E849F094E80F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wasm", "Wasm\Wasm.csproj", "{51FE14D8-9C9B-4499-9707-F8344BDAA5C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{91989CD4-D04E-41DD-A3A0-7FEBD07308D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91989CD4-D04E-41DD-A3A0-7FEBD07308D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91989CD4-D04E-41DD-A3A0-7FEBD07308D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D316015-AC91-4B12-8C99-E849F094E80F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D316015-AC91-4B12-8C99-E849F094E80F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D316015-AC91-4B12-8C99-E849F094E80F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D316015-AC91-4B12-8C99-E849F094E80F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51FE14D8-9C9B-4499-9707-F8344BDAA5C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51FE14D8-9C9B-4499-9707-F8344BDAA5C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51FE14D8-9C9B-4499-9707-F8344BDAA5C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51FE14D8-9C9B-4499-9707-F8344BDAA5C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

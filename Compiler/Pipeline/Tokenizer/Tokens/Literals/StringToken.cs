@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Fornax.Compiler.Logging;
+using System.Text;
 
 namespace Fornax.Compiler.Pipeline.Tokenizer.Tokens.Literals;
 
@@ -6,9 +7,9 @@ public class StringToken : Token
 {
     public string Value { get; set; } = "";
 
-    protected override bool Read(Pipe<char?> pipe)
+    protected override bool Read(Pipe<char?> pipe, WriteLog log)
     {
-        if (!pipe.HasNext || pipe.ReadNext()!.Value != '\"')
+        if (!pipe.HasNext || pipe.ReadNext(log)!.Value != '\"')
         {
             return false;
         }
@@ -18,7 +19,7 @@ public class StringToken : Token
 
         while (pipe.HasNext)
         {
-            var @char = pipe.ReadNext()!.Value;
+            var @char = pipe.ReadNext(log)!.Value;
 
             if (escape)
             {

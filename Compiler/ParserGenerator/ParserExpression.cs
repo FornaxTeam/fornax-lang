@@ -52,7 +52,7 @@ public class ParserExpression<T> : IParserExpressionToCount<T>, IParserExpressio
             {
                 if (pipe.HasNext)
                 {
-                    if (pipe.ReadNext() is T entry)
+                    if (pipe.ReadNext(log) is T entry)
                     {
                         if (conditions.All(condition => condition(entry)))
                         {

@@ -1,3 +1,4 @@
+using Fornax.Compiler.Logging;
 using System.IO;
 
 namespace Fornax.Compiler.Pipeline;
@@ -12,7 +13,7 @@ public class Source : Pipe<char?>
 
     public override long Length => data.Length;
 
-    public override char? ReadNext()
+    public override char? ReadNext(WriteLog log)
     {
         if (Position >= data.Length)
         {

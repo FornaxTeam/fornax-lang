@@ -9,7 +9,7 @@ public record ArgumentExpression(long Start, long End, IdentifierToken? Type, Id
 {
     public override string ToString() => base.ToString();
 
-    public static ArgumentExpression Read(Pipe<Token> pipe, WriteLog? log)
+    public static ArgumentExpression Read(Pipe<Token> pipe, WriteLog log)
     {
         var start = pipe.Position;
         IdentifierToken? type = null;
@@ -21,12 +21,10 @@ public record ArgumentExpression(long Start, long End, IdentifierToken? Type, Id
                 .Expect<IdentifierToken>()
                 .Handle(token => type = token)
                     .MessageIfMissing("Type expected.")
-                .Expect<WhitespaceToken>()
-                    .MessageIfMissing("Whitespace expected.")
                 .Expect<IdentifierToken>()
                     .Handle(token => name = token)
                     .MessageIfMissing("Parameter name expected.")
-                .Parse(pipe, null);
+                .Parse(pipe, (_, _, _, _) => { });
         }))
         {
             return new(start, pipe.Position, type, name);

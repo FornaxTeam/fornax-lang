@@ -6,5 +6,5 @@ namespace Fornax.Compiler.ParserGenerator.Interfaces;
 
 public interface IParserExpressionToExecute
 {
-    void Execute(Pipe<Token> pipe, WriteLog writeLog);
+    void Execute(Pipe<Token> pipe, WriteLog log);
 }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using Fornax.Compiler.Logging;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -14,16 +15,16 @@ public abstract class Token
 
     public long Length => End - Start;
 
-    protected abstract bool Read(Pipe<char?> pipe);
+    protected abstract bool Read(Pipe<char?> pipe, WriteLog log);
 
-    public static T? Read<T>(Pipe<char?> pipe) where T : Token, new()
+    public static T? Read<T>(Pipe<char?> pipe, WriteLog log) where T : Token, new()
     {
         T result = new()
         {
             Start = pipe.Position
         };
 
-        result.End = result.Read(pipe) ? pipe.Position : result.Start;
+        result.End = result.Read(pipe, log) ? pipe.Position : result.Start;
         return result.Start == result.End ? null : result;
     }
 

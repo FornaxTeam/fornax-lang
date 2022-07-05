@@ -19,47 +19,24 @@ public class ParserFragment : IParserFragment
         var oldPosition = pipe.Position;
         pipe.Position = position;
 
-        var token = pipe.ReadNext();
+        var token = pipe.ReadNext((_, _, _, _) => { });
 
         pipe.Position = oldPosition;
 
         return token;
     }
 
-    public bool Parse(Pipe<Token> pipe, WriteLog? log)
+    public bool Parse(Pipe<Token> pipe, WriteLog log)
     {
-        List<(string message, ErrorLevel errorLevel, long start, long end)> logEntries = new();
+        BufferedLogger bufferedLogger = new();
 
         foreach (var expression in Expressions)
         {
             expression.Execute(pipe, (message, errorLevel, start, end)
-                => logEntries.Add((message, errorLevel, start, end != -1 ? end : GetTokenAt(pipe, start)?.End ?? pipe.Length)));
+                => bufferedLogger.Log(message, errorLevel, start, end != -1 ? end : GetTokenAt(pipe, start)?.End ?? pipe.Length));
         }
 
-        var unterline = new ErrorLevel[pipe.Length + 1];
-
-        foreach (var (_, errorLevel, start, end) in logEntries)
-        {
-            for (var i = start; i < end; i++)
-            {
-                unterline[i] = errorLevel;
-            }
-
-            if (start == end)
-            {
-                unterline[start] = errorLevel;
-            }
-        }
-
-        if (log is not null)
-        {
-            foreach (var (message, errorLevel, start, end) in logEntries)
-            {
-                log(message, errorLevel, start, end);
-            }
-        }
-
-        return !logEntries.Any(entry => entry.errorLevel == ErrorLevel.Critical);
+        return bufferedLogger.WriteTo(log);
     }
 
     public static IParserFragment Create() => new ParserFragment();

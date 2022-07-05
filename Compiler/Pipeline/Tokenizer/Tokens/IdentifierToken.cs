@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Fornax.Compiler.Logging;
+using System.Text;
 
 namespace Fornax.Compiler.Pipeline.Tokenizer.Tokens;
 
@@ -6,13 +7,13 @@ public class IdentifierToken : Token
 {
     public string Value { get; set; } = "";
 
-    protected override bool Read(Pipe<char?> pipe)
+    protected override bool Read(Pipe<char?> pipe, WriteLog log)
     {
         StringBuilder stringBuilder = new();
 
         if (pipe.HasNext)
         {
-            var @char = pipe.ReadNext()!.Value;
+            var @char = pipe.ReadNext(log)!.Value;
 
             if (char.IsLetter(@char) || @char == '_')
             {
@@ -26,7 +27,7 @@ public class IdentifierToken : Token
 
         while (pipe.HasNext)
         {
-            var @char = pipe.ReadNext()!.Value;
+            var @char = pipe.ReadNext(log)!.Value;
 
             if (char.IsLetter(@char) || char.IsDigit(@char) || @char == '_')
             {

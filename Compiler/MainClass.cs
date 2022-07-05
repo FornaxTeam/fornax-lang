@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Fornax.Compiler.Logging;
 using Fornax.Compiler.Pipeline;
 using Fornax.Compiler.Pipeline.Expressionizer;
 using Fornax.Compiler.Pipeline.Tokenizer;
@@ -9,48 +12,57 @@ public static class MainClass
 {
     public static void Main()
     {
-        var source = Source.FromFile("Script.fdx");
+#if DEBUG
+        var currentDirectory = Environment.CurrentDirectory;
+        var directory = @"\Compiler\";
+        Environment.CurrentDirectory = currentDirectory[..(currentDirectory.IndexOf(directory) + directory.Length)];
+#endif
 
-        Console.WriteLine();
-        Console.WriteLine("Source:");
-        Console.WriteLine();
-
-        Console.WriteLine("    " + source.ToString().Replace("\r\n", "\n").Replace("\n", "\n    "));
-
-        Console.ReadKey();
-
-        var tokens = source
-            .Step(new TokenizerStep());
-
-        Console.WriteLine();
-        Console.WriteLine("Tokens:");
-        Console.WriteLine();
-
-        foreach (var token in tokens.Finalize())
+        static void Log(string message, ErrorLevel errorLevel, long start, long end = -1)
         {
-            if (token is null)
-                break;
+            var prefix = "§f[" + errorLevel switch
+            {
+                ErrorLevel.Critical => "§cCRIT",
+                ErrorLevel.Warning => "§eWARN",
+                ErrorLevel.Info => "§3INFO",
+                _ => "§7NONE"
+            } + "§r]: §7";
 
-            Console.WriteLine(" - " + token);
+            ColoredConsole.WriteLine(prefix + message.Replace("\n", "\n" + prefix) + $" §8({start}, {end})");
         }
 
-        Console.ReadKey();
+        var source = Source.FromFile("Script.fdx");
 
-        Console.WriteLine();
-        Console.WriteLine("Expressions:");
-        Console.WriteLine();
+        Console.WriteLine(source + "\n");
+
+        var tokens = source.Step(new TokenizerStep());
 
         var expressions = tokens
             .Step(new ExpressionizerStep());
 
-        foreach (var expression in expressions.Finalize())
-        {
-            if (expression is null)
-                break;
-
-            Console.WriteLine(expression);
-        }
+        expressions
+            .Finalize(Log)
+            .Cast<ITopLevelExpression>()
+            .ForEach(Console.WriteLine);
 
         Console.ReadKey();
+    }
+
+    public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
+    {
+        foreach (var entry in source)
+        {
+            action(entry);
+        }
+    }
+
+    public static IEnumerable<T> Handle<T>(this IEnumerable<T> source, Action<T> action)
+    {
+        foreach (var entry in source)
+        {
+            action(entry);
+        }
+
+        return source;
     }
 }

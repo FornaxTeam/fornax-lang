@@ -9,11 +9,12 @@ using System.Collections.Generic;
 
 namespace Fornax.Compiler.Pipeline.Expressionizer.Expressions;
 
-public record MethodExpression(long Start, long End, bool Export, ArgumentExpression[] Arguments, BlockExpression? Block) : Expression(Start, End)
+public record MethodExpression(long Start, long End, bool Export, ArgumentExpression[] Arguments, BlockExpression? Block)
+    : Expression(Start, End), ITopLevelExpression
 {
     public override string ToString() => base.ToString();
 
-    public static MethodExpression? Read(Pipe<Token> pipe, WriteLog log)
+    public static MethodExpression Read(Pipe<Token> pipe, WriteLog log)
     {
         List<ArgumentExpression>? arguments = null;
         BlockExpression? block = null;
@@ -21,23 +22,15 @@ public record MethodExpression(long Start, long End, bool Export, ArgumentExpres
         var export = false;
 
         var inputParser = ParserFragment.Create()
-            .Expect<WhitespaceToken>()
-                .Optional()
             .Expect<KeywordToken>()
                 .Where(token => token.Type == KeywordType.Export)
                 .Handle(token => export = true)
                 .Optional()
-            .Expect<WhitespaceToken>()
-                .Optional()
             .Expect<IdentifierToken>()
                 .MessageIfMissing("Name expected.")
-            .Expect<WhitespaceToken>()
-                .Optional()
             .Expect<SeperatorToken>()
                 .Where(token => token.Type == SeperatorType.ValueOpen)
                 .MessageIfMissing("'(' expected.")
-            .Expect<WhitespaceToken>()
-                .Optional()
             .Call((pipe, log) =>
                 {
                     List<ArgumentExpression> arguments = new();
@@ -54,17 +47,13 @@ public record MethodExpression(long Start, long End, bool Export, ArgumentExpres
                             if (argumentBefore is not null)
                             {
                                 ParserFragment.Create()
-                                    .Expect<WhitespaceToken>()
-                                        .Optional()
                                     .Expect<SeperatorToken>()
                                         .Where(token => token.Type == SeperatorType.Value)
                                         .MessageIfMissing("',' expected.")
-                                    .Expect<WhitespaceToken>()
-                                        .Optional()
-                                    .Parse(pipe, bufferedLogger.WriteLog);
+                                    .Parse(pipe, bufferedLogger.Log);
                             }
 
-                            argument = ArgumentExpression.Read(pipe, null);
+                            argument = ArgumentExpression.Read(pipe, (_, _, _, _) => { });
 
                             if (argument.Type is null)
                             {
@@ -104,18 +93,12 @@ public record MethodExpression(long Start, long End, bool Export, ArgumentExpres
                 })
                 .Handle(result => arguments = result)
                 .Ok()
-            .Expect<WhitespaceToken>()
-                .Optional()
             .Expect<SeperatorToken>()
                 .Where(token => token.Type == SeperatorType.ValueClose)
                 .MessageIfMissing("')' expected.")
-            .Expect<WhitespaceToken>()
-                .Optional()
             .Call(BlockExpression.Read)
                 .Handle(blockExpression => block = blockExpression)
                 .Ok()
-            .Expect<WhitespaceToken>()
-                .Optional()
             .Parse(pipe, log);
 
         {

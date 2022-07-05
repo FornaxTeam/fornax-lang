@@ -1,3 +1,4 @@
+using Fornax.Compiler.Logging;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Keywords;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Literals;
@@ -9,12 +10,8 @@ namespace Fornax.Compiler.Pipeline.Tokenizer;
 
 public class TokenizerStep : IPipeStep<char?, Token>
 {
-    private static readonly Func<Pipe<char?>, Token?>[] readers = new Func<Pipe<char?>, Token?>[]
+    private static readonly Func<Pipe<char?>, WriteLog, Token?>[] readers = new Func<Pipe<char?>, WriteLog, Token?>[]
     {
-        Token.Read<WhitespaceToken>,
-        Token.Read<CommentToken>,
-
-        Token.Read<CommentToken>,
         Token.Read<SeperatorToken>,
         Token.Read<OperatorToken>,
         Token.Read<KeywordToken>,
@@ -24,17 +21,33 @@ public class TokenizerStep : IPipeStep<char?, Token>
         Token.Read<IdentifierToken>,
     };
 
-    public Token? Execute(Pipe<char?> pipe) => Execute(pipe, false);
-
-    public Token? Execute(Pipe<char?> pipe, bool calledByExecute)
+    private static void IgnoreSpaces(Pipe<char?> pipe, WriteLog log)
     {
+        while (pipe.HasNext)
+        {
+            var @char = pipe.ReadNext(log);
+
+            if (!char.IsWhiteSpace(@char!.Value))
+            {
+                pipe.Position--;
+                break;
+            }
+        }
+    }
+
+    public Token? Execute(Pipe<char?> pipe, WriteLog log) => Execute(pipe, log, false);
+
+    public Token? Execute(Pipe<char?> pipe, WriteLog log, bool calledByExecute)
+    {
+        IgnoreSpaces(pipe, log);
+
         var fallback = pipe.Position;
 
         if (pipe.HasNext)
         {
             foreach (var reader in readers)
             {
-                var token = reader(pipe);
+                var token = reader(pipe, log);
 
                 if (token != null)
                 {
@@ -43,6 +56,7 @@ public class TokenizerStep : IPipeStep<char?, Token>
                         continue;
                     }
 
+                    IgnoreSpaces(pipe, log);
                     return token;
                 }
 
@@ -56,7 +70,7 @@ public class TokenizerStep : IPipeStep<char?, Token>
                 while (pipe.HasNext)
                 {
                     var oldPosition = pipe.Position;
-                    var expand = Execute(pipe, true) is null;
+                    var expand = Execute(pipe, log, true) is null;
 
                     if (expand)
                     {

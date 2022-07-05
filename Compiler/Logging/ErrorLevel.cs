@@ -1,4 +1,4 @@
-﻿namespace Fornax.Compiler.ParserGenerator;
+﻿namespace Fornax.Compiler.Logging;
 
 public enum ErrorLevel
 {

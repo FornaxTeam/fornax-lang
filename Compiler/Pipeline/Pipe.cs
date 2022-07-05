@@ -1,9 +1,7 @@
-using Fornax.Compiler.Pipeline.Tokenizer;
+using Fornax.Compiler.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 
 namespace Fornax.Compiler.Pipeline;
 
@@ -26,7 +24,7 @@ public abstract class Pipe<T>
             set => pipe.Position = value;
         }
 
-        public override To ReadNext() => step.Execute(pipe)!;
+        public override To ReadNext(WriteLog log) => step.Execute(pipe, log)!;
 
         public override bool HasNext => pipe.HasNext;
 
@@ -37,22 +35,22 @@ public abstract class Pipe<T>
 
     public abstract long Position { get; set; }
 
-    public abstract T ReadNext();
+    public abstract T ReadNext(WriteLog log);
 
     public abstract bool HasNext { get; }
 
     public Pipe<T2> Step<T2>(IPipeStep<T, T2> step) where T2 : class => new SteppedPipe<T, T2>(this, step);
 
-    public IEnumerable<T?> Finalize()
+    public IEnumerable<T?> Finalize(WriteLog log)
     {
         var oldPosition = Position;
         Position = 0;
 
         T? current;
 
-        while (true)
+        while (HasNext)
         {
-            current = ReadNext();
+            current = ReadNext(log);
 
             if (current is null)
             {
@@ -80,23 +78,5 @@ public abstract class Pipe<T>
         }
 
         return true;
-    }
-
-    public T2? Expect<T2>() where T2 : T
-    {
-        T2? result = default;
-
-        Fallback(fallbackPosition =>
-        {
-            if (ReadNext() is T2 element)
-            {
-                result = element;
-                return true;
-            }
-
-            return false;
-        });
-
-        return result;
     }
 }

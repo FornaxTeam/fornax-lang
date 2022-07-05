@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Fornax.Compiler.Logging;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 
@@ -48,7 +49,7 @@ public class OperatorToken : Token
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public OperatorType Type { get; private set; }
 
-    protected override bool Read(Pipe<char?> pipe)
+    protected override bool Read(Pipe<char?> pipe, WriteLog log)
     {
         foreach (var (operatorType, operatorString) in operators)
         {
@@ -56,7 +57,7 @@ public class OperatorToken : Token
             {
                 for (var i = 0; i < operatorString.Length; i++)
                 {
-                    if (!pipe.HasNext || pipe.ReadNext()!.Value != operatorString[i])
+                    if (!pipe.HasNext || pipe.ReadNext(log)!.Value != operatorString[i])
                     {
                         return false;
                     }

@@ -17,5 +17,5 @@ public interface IParserFragment
 
     IParserFragment ExpectEnd();
 
-    bool Parse(Pipe<Token> pipe, WriteLog? log);
+    bool Parse(Pipe<Token> pipe, WriteLog log);
 }
