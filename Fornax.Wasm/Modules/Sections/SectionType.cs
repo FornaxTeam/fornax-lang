@@ -1,4 +1,4 @@
-﻿namespace Fornax.Wasm;
+﻿namespace Fornax.Wasm.Sections;
 
 public enum SectionType : byte
 {

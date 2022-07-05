@@ -1,6 +1,7 @@
-﻿using System.IO;
+﻿using Fornax.Wasm.BaseNodes;
+using System.IO;
 
-namespace Fornax.Wasm;
+namespace Fornax.Wasm.Modules;
 
 public sealed class ModuleVersion : ValueBasedBinaryNode
 {
@@ -13,9 +14,7 @@ public sealed class ModuleVersion : ValueBasedBinaryNode
         var buffer = reader.ReadBuffer(4);
 
         if (buffer.Length != 4)
-        {
             throw new BinaryNodeReadException();
-        }
 
         Data = buffer;
     }

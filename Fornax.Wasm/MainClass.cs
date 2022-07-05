@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Fornax.Wasm.BaseNodes;
+using Fornax.Wasm.Modules;
+using Fornax.Wasm.Sections.Type;
+using System;
 using System.IO;
 using System.Linq;
 

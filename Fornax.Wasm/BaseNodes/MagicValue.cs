@@ -1,4 +1,4 @@
-﻿namespace Fornax.Wasm;
+﻿namespace Fornax.Wasm.BaseNodes;
 
 public sealed class MagicValue : StaticData
 {

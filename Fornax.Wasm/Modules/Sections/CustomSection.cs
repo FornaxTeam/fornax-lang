@@ -1,6 +1,7 @@
-﻿using System.Text;
+﻿using Fornax.Wasm.BaseNodes;
+using System.Text;
 
-namespace Fornax.Wasm;
+namespace Fornax.Wasm.Sections;
 
 public sealed class CustomSection : Section
 {

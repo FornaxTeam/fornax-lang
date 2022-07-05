@@ -1,4 +1,6 @@
-﻿namespace Fornax.Wasm;
+﻿using Fornax.Wasm.BaseNodes;
+
+namespace Fornax.Wasm.Sections;
 
 public abstract class Section : ChildBasedBinaryNode
 {

@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using Fornax.Wasm.BaseNodes;
+using Fornax.Wasm.Sections;
+using System.IO;
 
-namespace Fornax.Wasm;
+namespace Fornax.Wasm.Modules.Section;
 
 public sealed class SectionTypeBinaryNode : ValueBasedBinaryNode
 {
@@ -13,9 +15,7 @@ public sealed class SectionTypeBinaryNode : ValueBasedBinaryNode
     public override void Read(NodeReader reader)
     {
         if ((byte)SectionType != reader.ReadByte())
-        {
             throw new BinaryNodeReadException();
-        }
     }
 
     public override void Reset()

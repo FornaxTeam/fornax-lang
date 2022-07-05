@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Fornax.Wasm.BaseNodes;
+using Fornax.Wasm.Sections;
+using System;
 
-namespace Fornax.Wasm;
+namespace Fornax.Wasm.Modules;
 
 public sealed class Module : ChildBasedBinaryNode
 {
