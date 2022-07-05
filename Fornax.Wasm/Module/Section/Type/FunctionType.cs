@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Fornax.Wasm.BaseNodes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Fornax.Wasm;
+namespace Fornax.Wasm.Sections.Type;
 
 public class FunctionType : ChildBasedBinaryNode
 {

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace Fornax.Wasm;
+namespace Fornax.Wasm.BaseNodes;
 
 public sealed class OptionalBinaryNode<T> : IBinaryNode, IHasBinaryNodeValue where T : class, IBinaryNode, new()
 {
@@ -35,8 +35,6 @@ public sealed class OptionalBinaryNode<T> : IBinaryNode, IHasBinaryNodeValue whe
     public void Write(Stream stream)
     {
         if (Value is not null)
-        {
             Value.Write(stream);
-        }
     }
 }

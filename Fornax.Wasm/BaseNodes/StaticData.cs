@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace Fornax.Wasm;
+namespace Fornax.Wasm.BaseNodes;
 
 public class StaticData : ValueBasedBinaryNode
 {
@@ -13,9 +13,7 @@ public class StaticData : ValueBasedBinaryNode
     public override void Read(NodeReader reader)
     {
         if (!reader.ReadBuffer(Data.Length).SequenceEqual(Data))
-        {
             throw new BinaryNodeReadException();
-        }
     }
 
     public override void Reset()

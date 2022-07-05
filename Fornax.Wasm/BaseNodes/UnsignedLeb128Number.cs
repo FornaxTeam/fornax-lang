@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Fornax.Wasm;
+namespace Fornax.Wasm.BaseNodes;
 
 public sealed class UnsignedLeb128Number : ValueBasedBinaryNode
 {
@@ -39,16 +39,12 @@ public sealed class UnsignedLeb128Number : ValueBasedBinaryNode
             var @byte = reader.ReadByte();
 
             if (@byte == -1)
-            {
                 throw new BinaryNodeReadException();
-            }
 
             result |= (@byte & 0x7f) << shift;
 
             if ((@byte & 0x80) == 0)
-            {
                 break;
-            }
 
             shift += 7;
         }
@@ -68,9 +64,7 @@ public sealed class UnsignedLeb128Number : ValueBasedBinaryNode
             value >>= 7;
 
             if (value != 0)
-            {
                 @byte |= 0x80;
-            }
 
             stream.WriteByte((byte)@byte);
         }

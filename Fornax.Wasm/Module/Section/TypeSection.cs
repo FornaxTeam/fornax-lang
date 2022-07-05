@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Fornax.Wasm.BaseNodes;
+using Fornax.Wasm.Section;
+using Fornax.Wasm.Sections.Type;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Fornax.Wasm;
+namespace Fornax.Wasm.Sections;
 
 public sealed class TypeSection : Section
 {
@@ -24,9 +27,7 @@ public sealed class TypeSection : Section
                     : new FunctionType[typeCount.Value];
 
                 for (var i = 0; i < types.Length; i++)
-                {
                     yield return types[i] ??= new FunctionType(Array.Empty<BaseType>(), Array.Empty<BaseType>());
-                }
 
                 Types = types.ToList();
             }

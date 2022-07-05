@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Fornax.Wasm;
+namespace Fornax.Wasm.BaseNodes;
 
 public sealed class StaticSizedBuffer : ValueBasedBinaryNode
 {
@@ -18,9 +18,7 @@ public sealed class StaticSizedBuffer : ValueBasedBinaryNode
         var buffer = reader.ReadBuffer(Data.Length);
 
         if (buffer.Length != Data.Length)
-        {
             throw new BinaryNodeReadException();
-        }
 
         Data = buffer;
     }

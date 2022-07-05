@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace Fornax.Wasm;
+namespace Fornax.Wasm.BaseNodes;
 
 public abstract class ValueBasedBinaryNode : IBinaryNode
 {
