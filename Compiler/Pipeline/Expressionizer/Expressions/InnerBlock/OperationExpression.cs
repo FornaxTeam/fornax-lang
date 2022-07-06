@@ -24,14 +24,14 @@ public record OperationExpression(long Start, long End, IValueExpression? FirstE
         OperatorType @operator = 0;
 
         ParserFragment.Create()
-            .Call(StringConstant.Read)
-                .Handle(stringConstant => first = stringConstant)
+            .Call(ValueExpression.Read)
+                .Handle(expression => first = expression)
                 .Ok()
             .Expect<OperatorToken>()
                 .Handle(operatorToken => @operator = operatorToken.Type)
                 .MessageIfMissing("Operator expected.")
-            .Call(StringConstant.Read)
-                .Handle(stringConstant => second = stringConstant)
+            .Call(ValueExpression.Read)
+                .Handle(expression => second = expression)
                 .Ok()
             .Parse(pipe, log);
 

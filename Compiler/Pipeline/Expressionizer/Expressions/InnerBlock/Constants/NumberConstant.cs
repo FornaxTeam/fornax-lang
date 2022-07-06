@@ -11,21 +11,21 @@ using System.Threading.Tasks;
 
 namespace Fornax.Compiler.Pipeline.Expressionizer.Expressions.InnerBlock.Constants;
 
-public record StringConstant(long Start, long End, StringToken? Token) : Expression(Start, End), IValueExpression
+public record NumberConstant(long Start, long End, NumberToken? Token) : Expression(Start, End), IValueExpression
 {
     public override string ToString() => base.ToString();
 
-    public static StringConstant Read(Pipe<Token> pipe, WriteLog log)
+    public static NumberConstant Read(Pipe<Token> pipe, WriteLog log)
     {
         var start = pipe.Position;
-        StringToken? stringToken = null;
+        NumberToken? numberToken = null;
 
         ParserFragment.Create()
-            .Expect<StringToken>()
-                .Handle(token => stringToken = token)
-                .MessageIfMissing("String token expected.")
+            .Expect<NumberToken>()
+                .Handle(token => numberToken = token)
+                .MessageIfMissing("Number token expected.")
             .Parse(pipe, log);
 
-        return new(start, pipe.Position, stringToken);
+        return new(start, pipe.Position, numberToken);
     }
 }
