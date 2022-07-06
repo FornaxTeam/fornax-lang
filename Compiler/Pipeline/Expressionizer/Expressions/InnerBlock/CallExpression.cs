@@ -8,7 +8,8 @@ using System.Collections.Generic;
 
 namespace Fornax.Compiler.Pipeline.Expressionizer.Expressions.InnerBlock;
 
-public record CallExpression(long Start, long End, IdentifierToken? Name, IValueExpression[] Parameters) : Expression(Start, End), IValueExpression, ICommandExpression
+public record CallExpression(long Start, long End, IdentifierToken? Name, IValueExpression[] Parameters)
+    : Expression(Start, End), IValueExpression, ICommandExpression
 {
     public override string ToString() => base.ToString();
 
@@ -52,4 +53,3 @@ public record CallExpression(long Start, long End, IdentifierToken? Name, IValue
         return result!;
     }
 }
-
