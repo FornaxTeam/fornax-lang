@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Fornax.Wasm.Sections;
+namespace Fornax.Wasm.Modules.Sections.Type;
 
 public sealed class TypeSection : Section
 {

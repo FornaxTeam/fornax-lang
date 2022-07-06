@@ -1,4 +1,5 @@
 ﻿using Fornax.Wasm.BaseNodes;
+using Fornax.Wasm.Modules.Sections;
 
 namespace Fornax.Wasm.Sections;
 
