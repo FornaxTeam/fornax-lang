@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Fornax.Compiler.Logging;
 
@@ -6,12 +7,17 @@ public class BufferedLogger
 {
     private readonly Queue<(string message, ErrorLevel errorLevel, long start, long end)> queue = new();
 
-    private int warnings = 0;
-    private int errors = 0;
+    public bool HasErrors => CriticalCount != 0;
 
-    public bool HasErrors => errors != 0;
+    public bool HasWarnings => WarningCount != 0;
 
-    public bool HasWarnings => warnings != 0;
+    public int CriticalCount { get; private set; } = 0;
+
+    public int WarningCount { get; private set; } = 0;
+
+    public int WarningLength => queue.Sum(entry => entry.errorLevel == ErrorLevel.Warning ? (int)(entry.end - entry.start) : 0);
+
+    public int CriticalLength => queue.Sum(entry => entry.errorLevel == ErrorLevel.Critical ? (int)(entry.end - entry.start) : 0);
 
     public WriteLog Log => (message, errorLevel, start, end) =>
     {
@@ -19,11 +25,11 @@ public class BufferedLogger
 
         if (errorLevel == ErrorLevel.Warning)
         {
-            warnings++;
+            WarningCount++;
         }
         else if (errorLevel == ErrorLevel.Critical)
         {
-            errors++;
+            CriticalCount++;
         }
     };
 
@@ -43,7 +49,7 @@ public class BufferedLogger
             writeLog(message, errorLevel, start, end);
         }
 
-        warnings = errors = 0;
+        WarningCount = CriticalCount = 0;
 
         return successful;
     }

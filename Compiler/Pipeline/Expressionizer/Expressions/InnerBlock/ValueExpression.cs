@@ -5,6 +5,7 @@ using Fornax.Compiler.Pipeline.Tokenizer;
 using Fornax.Compiler.Pipeline.Tokenizer.Tokens.Operators;
 using System;
 using System.Collections.Generic;
+using System.IO.Pipes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,20 +19,47 @@ public record ValueExpression(long Start, long End, IValueExpression? Expression
     public static ValueExpression Read(Pipe<Token> pipe, WriteLog log)
     {
         var start = pipe.Position;
-        IValueExpression? expression = TryRead(StringConstant.Read, pipe, log);
-        expression ??= TryRead(NumberConstant.Read, pipe, log);
+
+        var readers = new Callable<IValueExpression>[]
+        {
+            StringConstant.Read,
+            NumberConstant.Read,
+            CallExpression.Read,
+        };
+
+        IValueExpression? expression = null;
+        List<BufferedLogger> loggers = new();
+
+        foreach (var reader in readers)
+        {
+            (var currentLogger, expression) = TryRead(reader, pipe, log);
+            loggers.Add(currentLogger);
+
+            if (expression is null)
+            {
+                break;
+            }
+        }
+
+        if (expression == null)
+        {
+            loggers.MaxBy(logger => logger.CriticalCount)?.WriteTo(log);
+        }
+
         return new(start, pipe.Position, expression);
     }
 
-    private static T? TryRead<T>(Callable<T> callable, Pipe<Token> pipe, WriteLog log) where T : class, IValueExpression
+    private static (BufferedLogger bufferedLogger, T? result) TryRead<T>(Callable<T> callable, Pipe<Token> pipe, WriteLog log) where T : class, IValueExpression
     {
-        try
+        BufferedLogger bufferedLogger = new();
+        T? result = null;
+
+        pipe.Fallback(l =>
         {
-            return callable.Invoke(pipe, log);
-        }
-        catch
-        {
-            return null;
-        }
+            result = callable(pipe, bufferedLogger.Log);
+            return bufferedLogger.HasErrors;
+        });
+        
+        return (bufferedLogger, result);
     }
 }

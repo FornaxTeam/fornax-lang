@@ -13,7 +13,7 @@ public class ExpressionizerStep : IPipeStep<Token, Expression>
         Expression? result = null;
 
         ParserFragment.Create()
-            .Call(OperationExpression.Read)
+            .Call(ValueExpression.Read)
                 .Handle(document => result = document)
                 .Ok()
             .Parse(pipe, log);
